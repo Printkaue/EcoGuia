@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoGuia - Descarte Consciente</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Configuração Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        eco: {
+                            light: '#f0fdf4',
+                            primary: '#16a34a',
+                            dark: '#14532d',
+                            earth: '#854d0e',
+                            alert: '#dc2626',
+                            blue: '#0284c7'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .option-btn {
+            transition: all 0.2s ease;
+        }
+        .option-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: #16a34a;
+        }
+
+        .quiz-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: #0284c7;
+            background-color: #f0f9ff;
+        }
+
+        .correct-answer { background-color: #dcfce7 !important; border-color: #22c55e !important; color: #166534 !important; }
+        .wrong-answer { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <header class="bg-eco-dark text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('classifier')">
+                <div class="bg-eco-primary p-2 rounded-lg">
+                    <i class="fa-solid fa-leaf text-2xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold tracking-tight">EcoGuia</h1>
+            </div>
+            
+            <nav class="flex flex-wrap justify-center gap-2">
+                <button onclick="switchTab('classifier')" id="tab-classifier" class="px-3 md:px-4 py-2 rounded-lg bg-eco-primary font-semibold transition flex items-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass"></i> <span class="hidden sm:inline">EcoIdentificador</span>
+                </button>
+                <button onclick="switchTab('trivia')" id="tab-trivia" class="px-3 md:px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 font-semibold transition flex items-center gap-2 border border-slate-700">
+                    <i class="fa-solid fa-graduation-cap"></i> <span class="hidden sm:inline">EcoQuiz</span>
+                </button>
+                <!-- NOVO BOTÃO: Mais Informações -->
+                <button onclick="switchTab('info')" id="tab-info" class="px-3 md:px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 font-semibold transition flex items-center gap-2 border border-slate-700">
+                    <i class="fa-solid fa-book-open"></i> <span class="hidden sm:inline">EcoInformações</span>
+                </button>
+                <button onclick="switchTab('search')" id="tab-search" class="px-3 md:px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 font-semibold transition flex items-center gap-2 border border-slate-700 text-white">
+    <i class="fa-solid fa-globe"></i> <span class="hidden sm:inline">EcoPesquisa</span>
+</button>
+<button onclick="switchTab('news')" id="tab-news" class="px-3 md:px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 font-semibold transition flex items-center gap-2 border border-slate-700 text-white">
+    <i class="fa-solid fa-newspaper"></i> <span class="hidden sm:inline">EcoNotícias</span>
+</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-5xl">
+        
+        <!-- SEÇÃO CLASSIFICADOR (Árvore de Decisão) -->
+        <div id="section-classifier" class="fade-in">
+            <!-- Seu código atual do classificador se mantém intacto -->
+            <section id="hero" class="text-center py-6 mb-4">
+                <h2 class="text-3xl md:text-5xl font-extrabold mb-4 text-slate-800">Qual o destino correto?</h2>
+                <p class="text-lg text-slate-600 max-w-2xl mx-auto">Identifique o material para descobrir como descartar e aprenda alternativas sustentáveis de consumo.</p>
+            </section>
+
+            <section id="quiz-section" class="glass-panel shadow-xl rounded-2xl p-6 md:p-10 mb-12 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-2 bg-slate-100">
+                    <div id="progress-bar" class="h-full bg-eco-primary transition-all duration-500 ease-out" style="width: 5%;"></div>
+                </div>
+                
+                <div id="quiz-container">
+                    <div class="flex justify-between items-center mb-8">
+                        <h3 class="text-xl font-bold text-slate-700 flex items-center gap-2">
+                            <i class="fa-solid fa-clipboard-question text-eco-primary"></i> Classificador
+                        </h3>
+                        <button id="btn-back" class="text-slate-500 hover:text-eco-dark hidden transition px-4 py-2 rounded-lg hover:bg-slate-100 font-medium" onclick="goBack()">
+                            <i class="fa-solid fa-arrow-left mr-2"></i>Voltar
+                        </button>
+                    </div>
+                    
+                    <div id="question-area" class="min-h-[250px] flex flex-col justify-center">
+                        <h4 id="question-text" class="text-2xl md:text-3xl font-bold mb-8 text-center text-slate-800">Carregando...</h4>
+                        <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 lg:gap-6">
+                            <!-- Opções via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <div id="result-container" class="hidden fade-in">
+                    <!-- Conteúdo de resultados mantido -->
+                    <div class="text-center mb-8">
+                        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-slate-50 mb-4 shadow-inner border-4 border-eco-primary">
+                            <i id="result-icon" class="fa-solid fa-recycle text-4xl"></i>
+                        </div>
+                        <h3 id="result-title" class="text-3xl font-extrabold text-slate-800 mb-2">Resultado</h3>
+                        <div class="inline-block px-3 py-1 rounded-full bg-slate-200 text-sm font-semibold text-slate-700 mb-6" id="result-category-badge">Categoria</div>
+                    </div>
+
+                    <div class="grid md:grid-cols-12 gap-6 mb-8">
+                        <div class="md:col-span-12 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row gap-6 items-center">
+                            <div class="flex-shrink-0 text-eco-primary text-5xl">
+                                <i class="fa-solid fa-trash-can-arrow-up"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xl mb-2 text-slate-800">Como Descartar Corretamente</h4>
+                                <div id="result-guide" class="text-slate-700 text-lg"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="md:col-span-6 bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+                            <h4 class="font-bold text-lg mb-3 text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-rotate text-blue-500"></i> Para onde vai?
+                            </h4>
+                            <p id="result-lifecycle" class="text-slate-700 text-sm flex-grow leading-relaxed">---</p>
+                            <div class="mt-4 pt-4 border-t border-slate-200 flex items-center gap-2">
+                                <i class="fa-solid fa-hourglass-half text-orange-500"></i>
+                                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Decomposição:</span>
+                                <span id="result-decomposition" class="text-slate-800 font-bold text-sm">---</span>
+                            </div>
+                        </div>
+
+                        <div class="md:col-span-6 bg-gradient-to-br from-green-50 to-emerald-100 p-6 rounded-2xl border border-green-200 shadow-sm flex flex-col">
+                            <h4 class="font-bold text-lg mb-3 text-emerald-900 flex items-center gap-2">
+                                <i class="fa-solid fa-lightbulb text-yellow-500 text-xl"></i> Alternativa Sustentável
+                            </h4>
+                            <p class="text-emerald-800 text-sm mb-2 font-medium">Melhor do que reciclar é não gerar o lixo.</p>
+                            <p id="result-eco-exchange" class="text-slate-700 text-sm bg-white/60 p-4 rounded-xl border border-green-200/50 mt-auto leading-relaxed">---</p>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-8">
+                        <button onclick="resetApp()" class="bg-eco-dark text-white px-8 py-4 rounded-xl font-bold hover:bg-green-800 transition shadow-lg inline-flex items-center justify-center gap-3 text-lg hover:-translate-y-1">
+                            <i class="fa-solid fa-rotate-left"></i> Classificar outro material
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- SEÇÃO TRIVIA (Eco-Quiz) -->
+        <div id="section-trivia" class="hidden fade-in">
+            <!-- Seu código atual do quiz se mantém intacto -->
+            <section class="text-center py-6 mb-4">
+                <h2 class="text-3xl md:text-5xl font-extrabold mb-4 text-eco-blue">Teste seus Conhecimentos</h2>
+                <p class="text-lg text-slate-600 max-w-2xl mx-auto">Responda a estas perguntas sobre sustentabilidade e descubra se você é um mestre da reciclagem.</p>
+            </section>
+
+            <div class="glass-panel shadow-xl rounded-2xl p-6 md:p-10 max-w-3xl mx-auto">
+                <div id="trivia-intro" class="text-center">
+                    <i class="fa-solid fa-earth-americas text-6xl text-eco-blue mb-6"></i>
+                    <h3 class="text-2xl font-bold mb-4">Bem-vindo ao EcoQuiz!</h3>
+                    <p class="text-slate-600 mb-8">São 5 perguntas rápidas. Vamos ver o quanto você sabe sobre o impacto dos materiais no nosso planeta.</p>
+                    <button onclick="startTrivia()" class="bg-eco-blue text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg text-lg">
+                        Começar o Quiz <i class="fa-solid fa-play ml-2"></i>
+                    </button>
+                </div>
+
+                <div id="trivia-play" class="hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-sm font-bold text-slate-500 uppercase" id="trivia-counter">Pergunta 1 de 5</span>
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-bold text-sm" id="trivia-score-display">Pontos: 0</span>
+                    </div>
+                    <h3 id="trivia-question" class="text-xl md:text-2xl font-bold mb-6 text-slate-800 text-center min-h-[80px] flex items-center justify-center">Carregando...</h3>
+                    <div id="trivia-options" class="flex flex-col gap-3">
+                        <!-- Opções do Trivia -->
+                    </div>
+                    <div id="trivia-feedback" class="mt-6 hidden p-4 rounded-xl font-medium text-center"></div>
+                    <div class="text-center mt-6">
+                        <button id="btn-next-trivia" onclick="nextTriviaQuestion()" class="hidden bg-slate-800 text-white px-6 py-3 rounded-lg font-bold hover:bg-slate-700 transition">
+                            Próxima Pergunta <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="trivia-result" class="hidden text-center">
+                    <i class="fa-solid fa-trophy text-6xl text-yellow-500 mb-6"></i>
+                    <h3 class="text-3xl font-bold mb-2">Fim de Jogo!</h3>
+                    <p class="text-xl text-slate-600 mb-6" id="trivia-final-score">Você acertou X de Y.</p>
+                    <p class="text-md text-slate-700 mb-8 font-medium italic" id="trivia-final-msg"></p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button onclick="startTrivia()" class="bg-eco-blue text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition">
+                            <i class="fa-solid fa-rotate-right mr-2"></i> Jogar Novamente
+                        </button>
+                        <button onclick="switchTab('classifier')" class="bg-slate-200 text-slate-800 px-6 py-3 rounded-xl font-bold hover:bg-slate-300 transition">
+                            <i class="fa-solid fa-magnifying-glass mr-2"></i> Voltar ao Classificador
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NOVA SEÇÃO: MAIS INFORMAÇÕES -->
+        <div id="section-info" class="hidden fade-in">
+            <section class="text-center py-6 mb-4">
+                <h2 class="text-3xl md:text-5xl font-extrabold mb-4 text-eco-earth">Biblioteca Educativa</h2>
+                <p class="text-lg text-slate-600 max-w-2xl mx-auto">Explore conhecimentos sobre reciclagem, processos e atitudes sustentáveis essenciais.</p>
+            </section>
+
+            <div class="flex flex-col gap-8">
+                
+                <!-- 1. Por que o descarte correto é importante? -->
+                <div class="glass-panel shadow-lg rounded-2xl p-6 md:p-8">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-seedling text-eco-primary"></i> Por que o descarte correto é importante?
+                    </h3>
+                    <div class="text-slate-700 space-y-3 leading-relaxed">
+                        <p class="font-medium text-lg mb-2">Pequenas atitudes mudam o mundo. Entenda o impacto:</p>
+                        <ul class="list-disc list-inside space-y-2 ml-2">
+                            <li><strong>Evita problemas ambientais:</strong> O lixo em ruas e rios causa enchentes e destrói ecossistemas.</li>
+                            <li><strong>Protege a água e o solo:</strong> Resíduos descartados incorretamente geram chorume, que contamina lençóis freáticos.</li>
+                            <li><strong>Facilita a reciclagem:</strong> Separar os resíduos na origem (sua casa) salva os materiais para que possam ser processados pelas cooperativas.</li>
+                            <li><strong>Saúde Pública:</strong> Evita a proliferação de vetores (como ratos e mosquitos da dengue) e protege os trabalhadores da limpeza.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 2. Cores das Lixeiras -->
+                <!-- 2. Cores das Lixeiras (Padrão CONAMA) -->
+                <div class="glass-panel shadow-lg rounded-2xl p-6 md:p-8">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-trash-can text-slate-600"></i> Cores das Lixeiras (Padrão CONAMA)
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <!-- Azul -->
+                        <div class="bg-blue-500 text-white p-4 rounded-xl shadow">
+                            <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-box mr-1"></i> Azul</h4>
+                            <p class="text-sm opacity-90 font-semibold border-b border-blue-400 pb-1 mb-2">Papel e Papelão</p>
+                            <p class="text-xs">Folhas, jornais, revistas, caixas.</p>
+                        </div>
+                        <!-- Vermelho -->
+                        <div class="bg-red-500 text-white p-4 rounded-xl shadow">
+                            <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-bottle-water mr-1"></i> Vermelho</h4>
+                            <p class="text-sm opacity-90 font-semibold border-b border-red-400 pb-1 mb-2">Plástico</p>
+                            <p class="text-xs">Garrafas PET, embalagens, sacolas, potes.</p>
+                        </div>
+                        <!-- Verde -->
+                        <div class="bg-green-500 text-white p-4 rounded-xl shadow">
+                            <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-wine-bottle mr-1"></i> Verde</h4>
+                            <p class="text-sm opacity-90 font-semibold border-b border-green-400 pb-1 mb-2">Vidro</p>
+                            <p class="text-xs">Garrafas, potes, frascos inteiros.</p>
+                        </div>
+                        <!-- Amarelo -->
+                        <div class="bg-yellow-400 text-slate-800 p-4 rounded-xl shadow">
+                            <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-gears mr-1"></i> Amarelo</h4>
+                            <p class="text-sm opacity-90 font-semibold border-b border-yellow-500 pb-1 mb-2">Metal</p>
+                            <p class="text-xs">Latas de alumínio, aço, tampas, sucatas.</p>
+                        </div>
+                        <!-- Preto -->
+                        <div class="bg-black text-white p-4 rounded-xl shadow">
+                            <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-tree mr-1"></i> Preto</h4>
+                            <p class="text-sm opacity-90 font-semibold border-b border-gray-700 pb-1 mb-2">Madeira</p>
+                            <p class="text-xs">Tábuas, caixotes, pallets, restos de madeira.</p>
+                        </div>
+                        <!-- Marrom -->
+                        <div class="bg-amber-800 text-white p-4 rounded-xl shadow">
+                            <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-apple-whole mr-1"></i> Marrom</h4>
+                            <p class="text-sm opacity-90 font-semibold border-b border-amber-700 pb-1 mb-2">Orgânicos</p>
+                            <p class="text-xs">Restos de alimentos, cascas, vegetais.</p>
+                        </div>
+                        <!-- Cinza -->
+                        <div class="bg-gray-500 text-white p-4 rounded-xl shadow">
+                            <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-dumpster mr-1"></i> Cinza</h4>
+                            <p class="text-sm opacity-90 font-semibold border-b border-gray-400 pb-1 mb-2">Rejeitos</p>
+                            <p class="text-xs">Materiais não recicláveis (lixo de banheiro).</p>
+                        </div>
+                        <!-- Laranja -->
+                        <div class="bg-orange-500 text-white p-4 rounded-xl shadow">
+                            <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Laranja</h4>
+                            <p class="text-sm opacity-90 font-semibold border-b border-orange-400 pb-1 mb-2">Perigosos</p>
+                            <p class="text-xs">Requerem atenção especial (ex: pilhas, químicos).</p>
+                        </div>
+                        <!-- Branco -->
+                        <div class="bg-white text-slate-800 border-2 border-slate-200 p-4 rounded-xl shadow">
+                            <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-kit-medical mr-1 text-red-500"></i> Branco</h4>
+                            <p class="text-sm font-semibold border-b border-slate-200 pb-1 mb-2">Saúde</p>
+                            <p class="text-xs text-slate-600">Resíduos gerados em serviços de saúde e hospitais.</p>
+                        </div>
+                        <!-- Roxo -->
+                        <div class="bg-purple-600 text-white p-4 rounded-xl shadow">
+                            <h4 class="font-bold text-lg mb-2"><i class="fa-solid fa-radiation mr-1"></i> Roxo</h4>
+                            <p class="text-sm opacity-90 font-semibold border-b border-purple-500 pb-1 mb-2">Radioativo</p>
+                            <p class="text-xs">Materiais radioativos com controle rigoroso.</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-blue-50 p-3 rounded-lg border border-blue-200 text-blue-800 text-sm">
+                        <i class="fa-solid fa-circle-info mr-1"></i> <strong>Importante:</strong> As cores seguem o padrão de identificação para a coleta seletiva, mas a disponibilidade e as regras podem variar de acordo com o seu município.
+                    </div>
+                </div>
+
+                <!-- 3. Os 5 Rs -->
+                <div class="glass-panel shadow-lg rounded-2xl p-6 md:p-8">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-arrows-spin text-eco-primary"></i> Os 5 Rs da Sustentabilidade
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 text-center">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col items-center">
+                            <i class="fa-solid fa-head-side-think text-3xl text-blue-500 mb-3"></i>
+                            <h4 class="font-bold text-slate-800 mb-2">Repensar</h4>
+                            <p class="text-xs text-slate-600">Pensar bem antes de comprar ou consumir algo novo.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col items-center">
+                            <i class="fa-solid fa-hand text-3xl text-red-500 mb-3"></i>
+                            <h4 class="font-bold text-slate-800 mb-2">Recusar</h4>
+                            <p class="text-xs text-slate-600">Evitar produtos e embalagens de plástico descartáveis desnecessários.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col items-center">
+                            <i class="fa-solid fa-arrow-down-short-wide text-3xl text-orange-500 mb-3"></i>
+                            <h4 class="font-bold text-slate-800 mb-2">Reduzir</h4>
+                            <p class="text-xs text-slate-600">Diminuir o consumo impulsivo e a quantidade de resíduos gerados.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col items-center">
+                            <i class="fa-solid fa-retweet text-3xl text-purple-500 mb-3"></i>
+                            <h4 class="font-bold text-slate-800 mb-2">Reutilizar</h4>
+                            <p class="text-xs text-slate-600">Utilizar objetos e materiais novamente antes de descartá-los.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col items-center">
+                            <i class="fa-solid fa-recycle text-3xl text-eco-primary mb-3"></i>
+                            <h4 class="font-bold text-slate-800 mb-2">Reciclar</h4>
+                            <p class="text-xs text-slate-600">Encaminhar materiais limpos para serem transformados em novos produtos.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Reciclagem x Compostagem -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass-panel shadow-lg rounded-2xl p-6 md:p-8 border-t-4 border-t-eco-primary">
+                        <h3 class="text-xl font-bold text-slate-800 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-recycle text-eco-primary"></i> Reciclagem
+                        </h3>
+                        <p class="text-sm text-slate-600 mb-4">Materiais que podem ser separados e encaminhados para indústrias, sendo transformados em novos itens quando há estrutura adequada.</p>
+                        <ul class="space-y-2 text-sm font-semibold text-slate-700">
+                            <li><i class="fa-solid fa-check text-green-500 w-5"></i> 📄 Papel</li>
+                            <li><i class="fa-solid fa-check text-green-500 w-5"></i> 🥤 Plástico</li>
+                            <li><i class="fa-solid fa-check text-green-500 w-5"></i> 🍾 Vidro</li>
+                            <li><i class="fa-solid fa-check text-green-500 w-5"></i> 🥫 Metal</li>
+                        </ul>
+                    </div>
+                    <div class="glass-panel shadow-lg rounded-2xl p-6 md:p-8 border-t-4 border-t-eco-earth">
+                        <h3 class="text-xl font-bold text-slate-800 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-seedling text-eco-earth"></i> Compostagem
+                        </h3>
+                        <p class="text-sm text-slate-600 mb-4">Resíduos orgânicos que passam por decomposição natural e controlada, transformando-se em composto rico para o solo (adubo).</p>
+                        <ul class="space-y-2 text-sm font-semibold text-slate-700">
+                            <li><i class="fa-solid fa-check text-green-500 w-5"></i> 🍎 Restos de alimentos</li>
+                            <li><i class="fa-solid fa-check text-green-500 w-5"></i> 🍌 Cascas de frutas</li>
+                            <li><i class="fa-solid fa-check text-green-500 w-5"></i> 🌿 Resíduos vegetais (folhas)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 5. Atenção Especial -->
+                <div class="glass-panel shadow-lg rounded-2xl p-6 md:p-8">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation text-orange-500"></i> Resíduos de Atenção Especial
+                    </h3>
+                    <p class="text-slate-600 mb-6">Estes materiais <strong>não devem</strong> ser colocados no lixo comum, pois exigem formas específicas de gerenciamento, logística reversa ou pontos de coleta exclusivos.</p>
+                    
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm text-center">
+                            <i class="fa-solid fa-battery-full text-2xl text-slate-700 mb-2"></i>
+                            <h5 class="text-sm font-bold">Pilhas & Baterias</h5>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm text-center">
+                            <i class="fa-solid fa-pills text-2xl text-slate-700 mb-2"></i>
+                            <h5 class="text-sm font-bold">Medicamentos</h5>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm text-center">
+                            <i class="fa-solid fa-laptop text-2xl text-slate-700 mb-2"></i>
+                            <h5 class="text-sm font-bold">Eletrônicos</h5>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm text-center">
+                            <i class="fa-solid fa-lightbulb text-2xl text-slate-700 mb-2"></i>
+                            <h5 class="text-sm font-bold">Lâmpadas</h5>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm text-center">
+                            <i class="fa-solid fa-car text-2xl text-slate-700 mb-2"></i>
+                            <h5 class="text-sm font-bold">Pneus</h5>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm text-center">
+                            <i class="fa-solid fa-jug-detergent text-2xl text-slate-700 mb-2"></i>
+                            <h5 class="text-sm font-bold">Óleo de Cozinha</h5>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm text-center">
+                            <i class="fa-solid fa-flask text-2xl text-slate-700 mb-2"></i>
+                            <h5 class="text-sm font-bold">Químicos</h5>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm text-center">
+                            <i class="fa-solid fa-paint-roller text-2xl text-slate-700 mb-2"></i>
+                            <h5 class="text-sm font-bold">Tintas</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. O Caminho do Resíduo -->
+                <div class="glass-panel shadow-lg rounded-2xl p-6 md:p-8">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-truck-fast text-slate-700"></i> O Caminho do Resíduo
+                    </h3>
+                    
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-2 md:gap-4 flex-wrap">
+                        
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-full md:w-32 text-center">
+                            <i class="fa-solid fa-user text-3xl text-blue-500 mb-2"></i>
+                            <h5 class="font-bold text-sm">Pessoa</h5>
+                            <p class="text-xs text-slate-500 mt-1">O resíduo é produzido.</p>
+                        </div>
+                        
+                        <i class="fa-solid fa-arrow-right text-2xl text-slate-300 hidden md:block"></i>
+                        <i class="fa-solid fa-arrow-down text-2xl text-slate-300 block md:hidden py-1"></i>
+
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-full md:w-32 text-center">
+                            <i class="fa-solid fa-boxes-stacked text-3xl text-orange-500 mb-2"></i>
+                            <h5 class="font-bold text-sm">Separação</h5>
+                            <p class="text-xs text-slate-500 mt-1">Separado por categoria na origem.</p>
+                        </div>
+
+                        <i class="fa-solid fa-arrow-right text-2xl text-slate-300 hidden md:block"></i>
+                        <i class="fa-solid fa-arrow-down text-2xl text-slate-300 block md:hidden py-1"></i>
+
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-full md:w-32 text-center">
+                            <i class="fa-solid fa-truck text-3xl text-gray-600 mb-2"></i>
+                            <h5 class="font-bold text-sm">Coleta</h5>
+                            <p class="text-xs text-slate-500 mt-1">Recolhido pelo sistema disponível.</p>
+                        </div>
+
+                        <i class="fa-solid fa-arrow-right text-2xl text-slate-300 hidden md:block"></i>
+                        <i class="fa-solid fa-arrow-down text-2xl text-slate-300 block md:hidden py-1"></i>
+
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-full md:w-32 text-center">
+                            <i class="fa-solid fa-magnifying-glass-chart text-3xl text-purple-500 mb-2"></i>
+                            <h5 class="font-bold text-sm">Triagem</h5>
+                            <p class="text-xs text-slate-500 mt-1">Classificado nas cooperativas.</p>
+                        </div>
+
+                        <i class="fa-solid fa-arrow-right text-2xl text-slate-300 hidden md:block"></i>
+                        <i class="fa-solid fa-arrow-down text-2xl text-slate-300 block md:hidden py-1"></i>
+
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-full md:w-32 text-center">
+                            <i class="fa-solid fa-industry text-3xl text-eco-primary mb-2"></i>
+                            <h5 class="font-bold text-sm">Reciclagem</h5>
+                            <p class="text-xs text-slate-500 mt-1">Transformado ou reutilizado.</p>
+                        </div>
+
+                        <i class="fa-solid fa-arrow-right text-2xl text-slate-300 hidden md:block"></i>
+                        <i class="fa-solid fa-arrow-down text-2xl text-slate-300 block md:hidden py-1"></i>
+
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 w-full md:w-32 text-center bg-green-50 border-green-200">
+                            <i class="fa-solid fa-box-open text-3xl text-green-600 mb-2"></i>
+                            <h5 class="font-bold text-sm text-green-800">Novo Produto</h5>
+                            <p class="text-xs text-green-700 mt-1">Volta ao ciclo produtivo.</p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 7. Você Sabia? (Interativo) -->
+                <div class="bg-yellow-50 shadow-lg rounded-2xl p-6 md:p-8 border border-yellow-200 relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 opacity-10">
+                        <i class="fa-solid fa-lightbulb text-9xl text-yellow-500"></i>
+                    </div>
+                    <div class="relative z-10 flex flex-col md:flex-row items-center gap-6">
+                        <div class="flex-shrink-0 bg-yellow-400 w-16 h-16 rounded-full flex items-center justify-center shadow-inner">
+                            <i class="fa-solid fa-lightbulb text-3xl text-white"></i>
+                        </div>
+                        <div class="flex-grow text-center md:text-left">
+                            <h3 class="text-2xl font-bold text-yellow-900 mb-2">Você sabia?</h3>
+                            <p id="curiosity-text" class="text-yellow-800 text-lg italic min-h-[60px] flex items-center transition-opacity duration-300">
+                                A reciclagem permite que determinados materiais retornem ao ciclo produtivo, reduzindo a necessidade de utilizar novas matérias-primas.
+                            </p>
+                        </div>
+                        <div class="flex-shrink-0 mt-4 md:mt-0">
+                            <button onclick="nextCuriosity()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-xl transition shadow-md flex items-center gap-2">
+                                Outra curiosidade <i class="fa-solid fa-rotate"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. Referências -->
+                <div class="mt-8 pt-8 border-t border-slate-300">
+                    <h3 class="text-lg font-bold text-slate-500 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-book-bookmark"></i> Referências
+                    </h3>
+                    <ul class="list-disc list-inside text-sm text-slate-500 space-y-2 marker:text-slate-400">
+                        <li>BRASIL. Política Nacional de Resíduos Sólidos — Lei nº 12.305/2010.</li>
+                        <li>BRASIL. Conselho Nacional do Meio Ambiente — CONAMA.</li>
+                        <li>Ministério do Meio Ambiente e Mudança do Clima.</li>
+                        <li>ABNT — Associação Brasileira de Normas Técnicas.</li>
+                        <!-- Espaço preparado para novas fontes -->
+                        <li class="italic"> Brasil Escola. Disponível em: https://brasilescola.uol.com.br/biologia/reciclagem.htm. Acesso em: 16/09/26.</li>
+                        <li class="italic"> Toda Matéria. Disponível em:https://www.todamateria.com.br/reciclagem/ . Acesso em: 16/09/26.</li>
+                        <li class="italic"> IBGE. Disponível em:https://www.ibge.gov.br/estatisticas/multidominio/meio-ambiente.html. Acesso em: 16/09/26.</li>
+                    </ul>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="section-search" class="hidden fade-in">
+    <!-- Cabeçalho da seção -->
+    <section class="text-center py-6 mb-4">
+        <h2 class="text-3xl md:text-5xl font-extrabold mb-4 text-purple-600">EcoPesquisa Livre</h2>
+        <p class="text-lg text-slate-600 max-w-2xl mx-auto">Pesquise por qualquer material para entender sua definição pela web e descobrir como descartá-lo corretamente.</p>
+    </section>
+
+    <!-- Painel de Pesquisa -->
+    <div class="glass-panel shadow-xl rounded-2xl p-6 md:p-10 max-w-4xl mx-auto bg-slate-800">
+        
+        <!-- Campo de Input e Botão -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-8">
+            <div class="relative flex-grow">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                    <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+                </div>
+                <!-- Input de texto (ativa função ao apertar Enter) -->
+                <input type="text" id="search-input" onkeypress="handleSearchEnter(event)" 
+                    class="bg-slate-700 border border-slate-600 text-white text-lg rounded-xl focus:ring-purple-500 focus:border-purple-500 block w-full pl-12 p-4 placeholder-slate-400 transition shadow-inner" 
+                    placeholder="Ex: Vidro, Papelão, Pilha, Computador...">
+            </div>
+            <button onclick="performSearch()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-4 px-8 rounded-xl transition shadow-md flex items-center justify-center gap-2 flex-shrink-0">
+                Buscar <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <!-- Área de Loading -->
+        <div id="search-loading" class="hidden text-center py-10">
+            <i class="fa-solid fa-circle-notch fa-spin text-4xl text-purple-500 mb-4"></i>
+            <p class="text-slate-300 font-medium text-lg">Consultando a Wikipedia...</p>
+        </div>
+
+        <!-- Área de Resultados (Visível após a busca) -->
+        <div id="search-results-area" class="hidden flex-col gap-6">
+            
+            <!-- Resultado Web: Wikipedia -->
+            <div class="bg-slate-700 rounded-xl p-6 border border-slate-600 shadow-md">
+                <h3 class="text-xl font-bold mb-3 flex items-center gap-2 text-white">
+                    <i class="fa-brands fa-wikipedia-w text-slate-300"></i> O que é? (Wikipedia)
+                </h3>
+                <p id="wiki-extract" class="text-slate-300 leading-relaxed mb-4">Carregando...</p>
+                <a id="wiki-link" href="#" target="_blank" class="text-purple-400 hover:text-purple-300 font-medium text-sm flex items-center gap-1 transition w-max">
+                    Ler artigo completo <i class="fa-solid fa-external-link-alt text-xs"></i>
+                </a>
+            </div>
+
+            <!-- Resultado Local: Guia de Descarte -->
+            <div id="local-guide-card" class="bg-gradient-to-br from-eco-dark to-eco-primary rounded-xl p-6 border border-green-600 shadow-md hidden">
+                <div class="flex flex-col sm:flex-row items-start gap-4">
+                    <div class="flex-shrink-0 bg-white/20 p-4 rounded-lg text-white text-3xl">
+                        <i id="local-icon" class="fa-solid fa-recycle"></i>
+                    </div>
+                    <div>
+                        <h3 id="local-title" class="text-2xl font-bold text-white mb-2">Título do Material</h3>
+                        <span id="local-badge" class="inline-block bg-white text-eco-dark text-xs font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-wider">Categoria</span>
+                        <p id="local-guide" class="text-green-50 text-base leading-relaxed">Guia de como descartar...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fallback: Gerador de Link do Google -->
+            <div id="google-fallback-card" class="bg-slate-700 rounded-xl p-8 border border-slate-600 shadow-md hidden text-center">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-600 mb-4">
+                    <i class="fa-brands fa-google text-3xl text-slate-300"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Ainda não catalogamos este material</h3>
+                <p class="text-slate-300 mb-6 max-w-lg mx-auto">Não encontramos um guia local de descarte para este item específico, mas você pode realizar uma busca rápida e direcionada na internet.</p>
+                <a id="google-link" href="#" target="_blank" class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl transition shadow-lg">
+                    Pesquisar como descartar no Google <i class="fa-solid fa-search"></i>
+                </a>
+            </div>
+
+        </div>
+        
+        <!-- Tratamento de Erro -->
+        <div id="search-error" class="hidden text-center py-10">
+            <i class="fa-solid fa-triangle-exclamation text-4xl text-red-500 mb-4"></i>
+            <p id="error-msg" class="text-red-400 font-medium text-lg">Ocorreu um erro de comunicação com a internet.</p>
+        </div>
+
+    </div>
+</div>
+<!-- NOVA SEÇÃO: ECONOTÍCIAS -->
+<div id="section-news" class="hidden fade-in">
+    <section class="text-center py-6 mb-4">
+        <h2 class="text-3xl md:text-5xl font-extrabold mb-4 text-emerald-600">EcoNotícias</h2>
+        <p class="text-lg text-slate-600 max-w-2xl mx-auto">Acompanhe as principais notícias das últimas 24 horas sobre o meio ambiente, sustentabilidade e reciclagem.</p>
+    </section>
+
+    <!-- Contêiner onde os cards das notícias serão injetados via JavaScript -->
+    <div id="news-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- O conteúdo será gerado aqui -->
+    </div>
+</div>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-8 text-center mt-auto">
+        <p>&copy; 2026 EcoGuia. Ação local, impacto global. <i class="fa-solid fa-earth-americas text-eco-primary ml-1"></i></p>
+    </footer>
+
+    <!-- Script externo vinculado -->
+    <script src="script.js"></script>
+    
+</body>
+</html>
+<!-- 1º: Carrega o banco de dados primeiro -->
+    <script src="dados.js"></script>
+    
+    <!-- 2º: Carrega as funções que vão usar o banco de dados -->
+    <script src="script.js"></script>
+
+</body>
+</html>
