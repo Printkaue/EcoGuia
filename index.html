@@ -105,6 +105,9 @@
 <button onclick="switchTab('news')" id="tab-news" class="px-3 md:px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 font-semibold transition flex items-center gap-2 border border-slate-700 text-white">
     <i class="fa-solid fa-newspaper"></i> <span class="hidden sm:inline">EcoNotícias</span>
 </button>
+<button onclick="switchTab('rural')" id="tab-rural" class="px-3 md:px-4 py-2 rounded-lg bg-amber-900/80 hover:bg-amber-800 font-bold transition flex items-center gap-2 border border-amber-600 text-amber-200 shadow-sm">
+    <i class="fa-solid fa-wheat-awn text-amber-400"></i> <span class="hidden sm:inline">EcoGuia Rural</span>
+</button>
             </nav>
         </div>
     </header>
@@ -548,7 +551,6 @@
                         <li class="italic"> Toda Matéria. Disponível em:https://www.todamateria.com.br/reciclagem/ . Acesso em: 16/09/26.</li>
                         <li class="italic"> IBGE. Disponível em:https://www.ibge.gov.br/estatisticas/multidominio/meio-ambiente.html. Acesso em: 16/09/26.</li>
                     </ul>
-                    </ul>
                 </div>
 
             </div>
@@ -648,22 +650,1067 @@
         <!-- O conteúdo será gerado aqui -->
     </div>
 </div>
+    
+        <!-- ======================================================== -->
+        <!-- SEÇÃO ECOGUIA RURAL (ASSISTENTE DIGITAL DO PRODUTOR)    -->
+        <!-- ======================================================== -->
+        <div id="section-rural" class="hidden fade-in">
+            
+            <!-- Banner de Apresentação e Identidade Visual Rural -->
+            <section class="bg-gradient-to-br from-amber-950 via-stone-900 to-emerald-950 text-white rounded-3xl p-6 md:p-10 shadow-2xl mb-8 relative overflow-hidden border border-amber-900/60">
+                <div class="absolute -right-8 -bottom-8 opacity-10 pointer-events-none text-amber-400">
+                    <i class="fa-solid fa-wheat-awn text-9xl"></i>
+                </div>
+                <div class="absolute right-1/4 -top-10 opacity-5 pointer-events-none text-emerald-400">
+                    <i class="fa-solid fa-seedling text-9xl"></i>
+                </div>
+
+                <div class="relative z-10">
+                    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                        <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase tracking-wider">
+                            <i class="fa-solid fa-wheat-awn"></i> Assistente Digital da Zona Rural & Semiárido
+                        </span>
+                        
+                        <!-- Localização Ativa no Topo -->
+                        <div class="flex items-center gap-2 bg-black/40 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/10 text-xs">
+                            <i class="fa-solid fa-location-dot text-amber-400"></i>
+                            <span id="current-location-label" class="font-semibold text-slate-200">Juazeiro - BA (Semiárido)</span>
+                            <button onclick="switchRuralSubTab('clima')" class="ml-1 text-amber-400 hover:text-amber-300 underline font-bold" title="Alterar local ou usar GPS">
+                                Alterar
+                            </button>
+                        </div>
+                    </div>
+
+                    <h2 class="text-3xl md:text-5xl font-black tracking-tight text-white mb-3 flex items-center gap-3">
+                        EcoGuia Rural
+                    </h2>
+                    <p class="text-base md:text-lg text-amber-100/90 max-w-3xl leading-relaxed mb-6">
+                        Informações meteorológicas de alta precisão, assistente agronômico inteligente, guia de conservação de safras, cotações de mercado e sustentabilidade no campo para a agricultura familiar.
+                    </p>
+
+                    <!-- Barra de Navegação Rápida entre os Módulos Rurais -->
+                    <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-amber-700/50">
+                        <button onclick="switchRuralSubTab('painel')" data-subtab="painel" class="rural-nav-btn px-3 py-2 rounded-xl font-bold transition flex items-center gap-2 shadow-sm bg-amber-700 text-white border-2 border-amber-800 text-sm whitespace-nowrap">
+                            <i class="fa-solid fa-house-chimney-window"></i> <span>Painel Geral</span>
+                        </button>
+                        <button onclick="switchRuralSubTab('clima')" data-subtab="clima" class="rural-nav-btn px-3 py-2 rounded-xl font-semibold transition flex items-center gap-2 text-slate-700 hover:bg-amber-100/70 border border-amber-200/60 bg-white/80 text-sm whitespace-nowrap">
+                            <i class="fa-solid fa-cloud-sun-rain text-blue-500"></i> <span>EcoClima</span>
+                        </button>
+                        <button onclick="switchRuralSubTab('plantio')" data-subtab="plantio" class="rural-nav-btn px-3 py-2 rounded-xl font-semibold transition flex items-center gap-2 text-slate-700 hover:bg-amber-100/70 border border-amber-200/60 bg-white/80 text-sm whitespace-nowrap">
+                            <i class="fa-solid fa-seedling text-emerald-600"></i> <span>EcoPlantio</span>
+                        </button>
+                        <button onclick="switchRuralSubTab('armazem')" data-subtab="armazem" class="rural-nav-btn px-3 py-2 rounded-xl font-semibold transition flex items-center gap-2 text-slate-700 hover:bg-amber-100/70 border border-amber-200/60 bg-white/80 text-sm whitespace-nowrap">
+                            <i class="fa-solid fa-warehouse text-amber-700"></i> <span>EcoArmazém</span>
+                        </button>
+                        <button onclick="switchRuralSubTab('videos')" data-subtab="videos" class="rural-nav-btn px-3 py-2 rounded-xl font-semibold transition flex items-center gap-2 text-slate-700 hover:bg-amber-100/70 border border-amber-200/60 bg-white/80 text-sm whitespace-nowrap">
+                            <i class="fa-solid fa-video text-red-500"></i> <span>EcoVida Rural</span>
+                        </button>
+                        <button onclick="switchRuralSubTab('cotacao')" data-subtab="cotacao" class="rural-nav-btn px-3 py-2 rounded-xl font-semibold transition flex items-center gap-2 text-slate-700 hover:bg-amber-100/70 border border-amber-200/60 bg-white/80 text-sm whitespace-nowrap">
+                            <i class="fa-solid fa-chart-line text-emerald-600"></i> <span>EcoCotação</span>
+                        </button>
+                        <button onclick="switchRuralSubTab('ia')" data-subtab="ia" class="rural-nav-btn px-3 py-2 rounded-xl font-semibold transition flex items-center gap-2 text-slate-700 hover:bg-amber-100/70 border border-amber-200/60 bg-white/80 text-sm whitespace-nowrap">
+                            <i class="fa-solid fa-robot text-purple-600"></i> <span>EcoIA Rural</span>
+                        </button>
+                        <button onclick="switchRuralSubTab('aproveitamento')" data-subtab="aproveitamento" class="rural-nav-btn px-3 py-2 rounded-xl font-semibold transition flex items-center gap-2 text-slate-700 hover:bg-amber-100/70 border border-amber-200/60 bg-white/80 text-sm whitespace-nowrap">
+                            <i class="fa-solid fa-recycle text-emerald-700"></i> <span>EcoAproveitamento</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================== -->
+            <!-- 1. SUB-ABA: PAINEL GERAL (DASHBOARD RURAL)    -->
+            <!-- ============================================== -->
+            <div id="rural-sub-painel" class="space-y-8">
+                
+                <!-- Mini Widget Climático em Destaque -->
+                <div class="glass-panel shadow-lg rounded-2xl p-6 md:p-8 border border-amber-200/70 bg-gradient-to-r from-white via-amber-50/30 to-emerald-50/20">
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-2xl bg-amber-100/80 flex items-center justify-center flex-shrink-0 shadow-inner">
+                                <i id="dash-widget-icon" class="fa-solid fa-sun text-4xl text-amber-500"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold uppercase tracking-wider text-amber-800 bg-amber-100/80 px-2.5 py-0.5 rounded-full">Condições no Campo</span>
+                                    <span id="dash-widget-city" class="text-xs font-bold text-slate-600">Juazeiro - BA</span>
+                                </div>
+                                <div class="flex items-baseline gap-3 mt-1">
+                                    <span id="dash-widget-temp" class="text-3xl md:text-4xl font-extrabold text-slate-800">--°C</span>
+                                    <span id="dash-widget-desc" class="text-sm font-semibold text-slate-600">Carregando clima...</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-xs text-slate-500 mt-1">
+                                    <span id="dash-widget-minmax"><i class="fa-solid fa-temperature-half text-slate-400"></i> Mín --°C | Máx --°C</span>
+                                    <span id="dash-widget-rain"><i class="fa-solid fa-umbrella text-blue-400"></i> Chuva: --%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                            <button onclick="switchRuralSubTab('clima')" class="flex-1 md:flex-none px-5 py-3 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs transition shadow-sm flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-cloud-sun-rain"></i> Previsão Completa (7 dias)
+                            </button>
+                            <button onclick="useGpsLocation()" class="flex-1 md:flex-none px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition border border-slate-300 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-location-crosshairs text-amber-600"></i> Atualizar GPS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grade com os 7 Módulos Rurais -->
+                <div>
+                    <div class="flex justify-between items-end mb-6">
+                        <div>
+                            <h3 class="text-2xl font-black text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-compass text-amber-700"></i> Ferramentas e Recursos Rurais
+                            </h3>
+                            <p class="text-sm text-slate-600">Escolha uma ferramenta abaixo para orientar suas decisões no lote e na comunidade:</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        
+                        <!-- 1. EcoClima -->
+                        <div onclick="switchRuralSubTab('clima')" class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:border-amber-500 hover:shadow-lg transition cursor-pointer flex flex-col justify-between group">
+                            <div>
+                                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-cloud-sun-rain"></i>
+                                </div>
+                                <h4 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-amber-700 transition">1. EcoClima</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                                    Monitoramento climático específico para propriedades rurais: probabilidade de chuva, ventos para pulverização, índice UV, umidade e alertas de estiagem.
+                                </p>
+                            </div>
+                            <span class="text-xs font-bold text-amber-700 flex items-center gap-1 mt-auto">
+                                Acessar monitoramento <i class="fa-solid fa-arrow-right text-[11px] group-hover:translate-x-1 transition"></i>
+                            </span>
+                        </div>
+
+                        <!-- 2. EcoPlantio -->
+                        <div onclick="switchRuralSubTab('plantio')" class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:border-amber-500 hover:shadow-lg transition cursor-pointer flex flex-col justify-between group">
+                            <div>
+                                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-seedling"></i>
+                                </div>
+                                <h4 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-amber-700 transition">2. EcoPlantio</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                                    Assistente inteligente de cultivo baseado em dados da Embrapa e ZARC: espaçamento, irrigação, ciclo da colheita e combate ecológico a pragas.
+                                </p>
+                            </div>
+                            <span class="text-xs font-bold text-amber-700 flex items-center gap-1 mt-auto">
+                                Planejar cultivo <i class="fa-solid fa-arrow-right text-[11px] group-hover:translate-x-1 transition"></i>
+                            </span>
+                        </div>
+
+                        <!-- 3. EcoArmazém -->
+                        <div onclick="switchRuralSubTab('armazem')" class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:border-amber-500 hover:shadow-lg transition cursor-pointer flex flex-col justify-between group">
+                            <div>
+                                <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-warehouse"></i>
+                                </div>
+                                <h4 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-amber-700 transition">3. EcoArmazém</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                                    Métodos comprovados de conservação pós-colheita: guarde milho, feijão, tubérculos e queijos com proteção contra caruncho e fungos sem agrotóxicos.
+                                </p>
+                            </div>
+                            <span class="text-xs font-bold text-amber-700 flex items-center gap-1 mt-auto">
+                                Ver técnicas de conservação <i class="fa-solid fa-arrow-right text-[11px] group-hover:translate-x-1 transition"></i>
+                            </span>
+                        </div>
+
+                        <!-- 4. EcoVida Rural -->
+                        <div onclick="switchRuralSubTab('videos')" class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:border-amber-500 hover:shadow-lg transition cursor-pointer flex flex-col justify-between group">
+                            <div>
+                                <div class="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-video"></i>
+                                </div>
+                                <h4 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-amber-700 transition">4. EcoVida Rural</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                                    Central audiovisual integrada com vídeos oficiais de instituições confiáveis: Embrapa, SENAR, EMATER e canais de agroecologia familiar.
+                                </p>
+                            </div>
+                            <span class="text-xs font-bold text-amber-700 flex items-center gap-1 mt-auto">
+                                Explorar biblioteca de vídeos <i class="fa-solid fa-arrow-right text-[11px] group-hover:translate-x-1 transition"></i>
+                            </span>
+                        </div>
+
+                        <!-- 5. EcoCotação -->
+                        <div onclick="switchRuralSubTab('cotacao')" class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:border-amber-500 hover:shadow-lg transition cursor-pointer flex flex-col justify-between group">
+                            <div>
+                                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-chart-line"></i>
+                                </div>
+                                <h4 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-amber-700 transition">5. EcoCotação</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                                    Cotações atualizadas e transparentes de milho, feijão, mandioca, frutas, verduras e leite baseadas em levantamentos da CONAB e CEASAs estaduais.
+                                </p>
+                            </div>
+                            <span class="text-xs font-bold text-amber-700 flex items-center gap-1 mt-auto">
+                                Consultar preços agrícolas <i class="fa-solid fa-arrow-right text-[11px] group-hover:translate-x-1 transition"></i>
+                            </span>
+                        </div>
+
+                        <!-- 6. EcoIA Rural -->
+                        <div onclick="switchRuralSubTab('ia')" class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:border-amber-500 hover:shadow-lg transition cursor-pointer flex flex-col justify-between group">
+                            <div>
+                                <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-robot"></i>
+                                </div>
+                                <h4 class="text-xl font-bold text-slate-800 mb-2 group-hover:text-amber-700 transition">6. EcoIA Rural</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                                    Converse em tempo real com o assistente virtual agrônomo: tire dúvidas sobre épocas de semeadura, receitas de caldas caseiras e convivência com a seca.
+                                </p>
+                            </div>
+                            <span class="text-xs font-bold text-amber-700 flex items-center gap-1 mt-auto">
+                                Conversar com o assistente <i class="fa-solid fa-arrow-right text-[11px] group-hover:translate-x-1 transition"></i>
+                            </span>
+                        </div>
+
+                        <!-- 7. EcoAproveitamento -->
+                        <div onclick="switchRuralSubTab('aproveitamento')" class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:border-amber-500 hover:shadow-lg transition cursor-pointer flex flex-col justify-between group sm:col-span-2 lg:col-span-3 bg-gradient-to-r from-emerald-50/60 to-amber-50/60 border-emerald-200">
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                                <div class="w-14 h-14 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-3xl flex-shrink-0 shadow-md">
+                                    <i class="fa-solid fa-recycle"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-bold text-emerald-950 mb-1">7. EcoAproveitamento & Sustentabilidade na Propriedade</h4>
+                                    <p class="text-xs text-slate-700 leading-relaxed max-w-3xl">
+                                        Conecte as atividades do campo à proposta ecológica do EcoGuia: compostagem rural com esterco, receita de biofertilizantes, destinação de embalagens de defensivos pelo inPEV (tríplice lavagem), cisternas de placas e calculadora de palhada.
+                                    </p>
+                                </div>
+                                <span class="ml-auto px-4 py-2 bg-emerald-700 text-white text-xs font-bold rounded-xl whitespace-nowrap shadow-sm hover:bg-emerald-800 transition">
+                                    Abrir Módulo de Sustentabilidade <i class="fa-solid fa-arrow-right ml-1"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Botão para alternar de volta ao EcoGuia Urbano -->
+                <div class="text-center pt-6 border-t border-slate-200">
+                    <button onclick="switchTab('classifier')" class="px-6 py-3 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs transition inline-flex items-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass"></i> Ir para o EcoIdentificador (Classificador Urbano)
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============================================== -->
+            <!-- 2. SUB-ABA: ECOCLIMA (MONITORAMENTO CLIMÁTICO)-->
+            <!-- ============================================== -->
+            <div id="rural-sub-clima" class="hidden space-y-8">
+                
+                <!-- Barra de Ferramentas e Busca de Localização -->
+                <div class="glass-panel p-6 rounded-2xl shadow-md border border-slate-200 flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between">
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-grow">
+                        <!-- Select de Cidades Rurais -->
+                        <div class="relative min-w-[240px]">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase block mb-1">Município ou Polo Agrícola:</label>
+                            <select id="clima-city-select" onchange="handleRuralCityChange(this.value)" class="w-full bg-white border border-slate-300 text-slate-800 text-sm font-semibold rounded-xl p-2.5 focus:ring-2 focus:ring-amber-500">
+                                <!-- Preenchido via JS -->
+                            </select>
+                        </div>
+
+                        <!-- Busca Personalizada -->
+                        <div class="relative flex-grow">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase block mb-1">Buscar Qualquer Município do Brasil:</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="rural-city-search-input" placeholder="Ex: Petrolina, Irecê, Patos, Caicó..." 
+                                    onkeypress="if(event.key==='Enter') searchCustomMunicipality()"
+                                    class="w-full bg-white border border-slate-300 text-slate-800 text-sm rounded-xl p-2.5 focus:ring-2 focus:ring-amber-500">
+                                <button type="button" onclick="searchCustomMunicipality()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition flex-shrink-0">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </button>
+                            </div>
+                            <!-- Resultados da Busca Flutuante -->
+                            <div id="search-city-results" class="hidden absolute top-full left-0 right-0 bg-white border border-slate-300 rounded-xl shadow-xl z-30 mt-1 max-h-60 overflow-y-auto"></div>
+                        </div>
+                    </div>
+
+                    <!-- Botão de GPS -->
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-end gap-2 flex-shrink-0">
+                        <button type="button" id="btn-gps-weather" onclick="useGpsLocation()" class="px-5 py-3 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs transition shadow-sm flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-location-crosshairs text-amber-300"></i> Usar Meu GPS
+                        </button>
+                        <button type="button" onclick="fetchRuralWeather(ruralState.currentLocation.lat, ruralState.currentLocation.lon, ruralState.currentLocation.name)" class="px-3.5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition border border-slate-300" title="Atualizar dados agora">
+                            <i class="fa-solid fa-rotate-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Indicador de Carregamento -->
+                <div id="clima-loading-state" class="hidden text-center py-12 bg-white rounded-2xl border border-slate-200">
+                    <i class="fa-solid fa-circle-notch fa-spin text-4xl text-amber-600 mb-3"></i>
+                    <p class="text-slate-600 font-bold text-base">Consultando estações meteorológicas e satélite Open-Meteo...</p>
+                    <p class="text-xs text-slate-400 mt-1">Calculando previsões horárias, probabilidade de chuva e alertas agronômicos.</p>
+                </div>
+
+                <!-- Conteúdo Principal do Clima -->
+                <div id="clima-main-content" class="space-y-8 transition-opacity">
+                    
+                    <!-- Cabeçalho de Status e Transparência -->
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                        <div class="flex items-center gap-2">
+                            <h3 id="clima-city-display" class="text-2xl font-black text-slate-800">Juazeiro - BA</h3>
+                            <span id="clima-source-badge" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 border border-green-300">
+                                Tempo Real
+                            </span>
+                        </div>
+                        <span id="clima-last-update" class="text-xs text-slate-500 font-medium">
+                            Atualizado recentemente • Transparência de dados
+                        </span>
+                    </div>
+
+                    <!-- Métricas Principais (Cards de Destaque) -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        
+                        <!-- 1. Temperatura e Condição Atual -->
+                        <div class="bg-gradient-to-br from-amber-500 to-amber-700 text-white rounded-2xl p-5 shadow-md flex flex-col justify-between col-span-2 md:col-span-1">
+                            <div class="flex justify-between items-start">
+                                <span class="text-xs font-bold uppercase tracking-wider text-amber-200">Agora no Campo</span>
+                                <i id="clima-icon-now" class="fa-solid fa-sun text-4xl text-amber-200"></i>
+                            </div>
+                            <div class="my-3">
+                                <div id="clima-temp-now" class="text-4xl md:text-5xl font-black">--°C</div>
+                                <div id="clima-desc-now" class="text-xs font-semibold text-amber-100 mt-1">Carregando...</div>
+                            </div>
+                            <div class="text-[11px] text-amber-200 pt-2 border-t border-amber-400/40 flex justify-between">
+                                <span>Sensação térmica:</span>
+                                <span id="clima-sensation" class="font-bold">--°C</span>
+                            </div>
+                        </div>
+
+                        <!-- 2. Variação do Dia e Probabilidade de Chuva -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+                            <div class="flex justify-between items-start">
+                                <span class="text-xs font-bold text-slate-500 uppercase">Precipitação Hoje</span>
+                                <i class="fa-solid fa-cloud-showers-heavy text-2xl text-blue-500"></i>
+                            </div>
+                            <div class="my-2">
+                                <div id="clima-rain-prob-today" class="text-3xl font-extrabold text-blue-600">--%</div>
+                                <div class="text-xs font-semibold text-slate-500 mt-0.5">Probabilidade</div>
+                            </div>
+                            <div class="text-[11px] text-slate-600 pt-2 border-t border-slate-100 flex justify-between">
+                                <span>Volume previsto:</span>
+                                <span id="clima-rain-vol-today" class="font-bold text-slate-800">-- mm</span>
+                            </div>
+                        </div>
+
+                        <!-- 3. Umidade e Vento -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+                            <div class="flex justify-between items-start">
+                                <span class="text-xs font-bold text-slate-500 uppercase">Umidade do Ar</span>
+                                <i class="fa-solid fa-droplet text-2xl text-teal-500"></i>
+                            </div>
+                            <div class="my-2">
+                                <div id="clima-humidity" class="text-3xl font-extrabold text-slate-800">--%</div>
+                                <div class="text-xs text-slate-500">Umidade Relativa</div>
+                            </div>
+                            <div class="text-[11px] text-slate-600 pt-2 border-t border-slate-100">
+                                <div id="clima-min-max-today" class="font-bold">Mín: --°C | Máx: --°C</div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Vento e UV -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+                            <div class="flex justify-between items-start">
+                                <span class="text-xs font-bold text-slate-500 uppercase">Vento & Pulverização</span>
+                                <i class="fa-solid fa-wind text-2xl text-slate-600"></i>
+                            </div>
+                            <div class="my-2">
+                                <div id="clima-wind" class="text-2xl font-extrabold text-slate-800 leading-tight">-- km/h</div>
+                            </div>
+                            <div class="text-[11px] text-slate-600 pt-2 border-t border-slate-100 space-y-1">
+                                <div class="flex justify-between items-center">
+                                    <span>Índice UV:</span>
+                                    <span id="clima-uv" class="font-bold">--</span>
+                                </div>
+                                <div class="flex justify-between items-center text-[10px] text-slate-400">
+                                    <span>Pressão:</span>
+                                    <span id="clima-pressure" class="font-mono">-- hPa</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Previsão Horária (Próximas 24 horas) -->
+                    <div class="bg-slate-50/80 p-6 rounded-2xl border border-slate-200">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-2">
+                                <i class="fa-solid fa-clock text-amber-700"></i> Previsão Horária de Chuva e Temperatura (Próximas 24h)
+                            </h4>
+                            <span class="text-xs text-slate-500 hidden sm:inline">Deslize para ver as próximas horas</span>
+                        </div>
+                        <div id="clima-hourly-container" class="flex gap-3 overflow-x-auto pb-3 scrollbar-thin scrollbar-thumb-amber-300">
+                            <!-- Preenchido via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Alertas Agroclimáticos -->
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-lg mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-600"></i> Alertas e Condições Adversas para a Propriedade
+                        </h4>
+                        <div id="clima-alerts-container" class="space-y-3">
+                            <!-- Preenchido via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Previsão de 7 Dias -->
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-week text-emerald-700"></i> Previsão para os Próximos 7 Dias & Recomendações
+                        </h4>
+                        <div id="clima-daily-container" class="space-y-3">
+                            <!-- Preenchido via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Histórico Recente de Chuva -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h4 class="font-bold text-slate-800 text-base mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left text-blue-600"></i> Histórico de Chuva Recente no Solo
+                        </h4>
+                        <div id="clima-history-container">
+                            <!-- Preenchido via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Transparência e Aviso de Isenção -->
+                    <div class="bg-blue-50/60 p-4 rounded-xl border border-blue-200 text-xs text-blue-900 leading-relaxed">
+                        <i class="fa-solid fa-circle-info text-blue-600 mr-1.5"></i>
+                        <strong>Transparência Científica:</strong> As informações são obtidas por modelos meteorológicos de alta resolução (Open-Meteo WMO e satélites). Lembre-se de que previsões meteorológicas indicam <em>probabilidades</em> e tendências, não certezas absolutas. Ajuste o manejo de acordo com a observação direta do tempo na sua lavoura.
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ============================================== -->
+            <!-- 3. SUB-ABA: ECOPLANTIO (ASSISTENTE DE CULTIVO) -->
+            <!-- ============================================== -->
+            <div id="rural-sub-plantio" class="hidden space-y-8">
+                
+                <div class="text-center max-w-2xl mx-auto py-2">
+                    <h3 class="text-3xl font-black text-slate-800 mb-2">EcoPlantio Inteligente</h3>
+                    <p class="text-sm text-slate-600">
+                        Informe o que pretende plantar e as condições da sua terra para receber um plano de manejo agronômico embasado pela Embrapa e pelo ZARC.
+                    </p>
+                </div>
+
+                <!-- Formulário de Planejamento -->
+                <div class="glass-panel p-6 md:p-8 rounded-2xl shadow-md border border-slate-200 bg-white">
+                    <h4 class="font-bold text-slate-800 text-lg mb-6 flex items-center gap-2 border-b border-slate-200 pb-3">
+                        <i class="fa-solid fa-list-check text-emerald-600"></i> Dados da Sua Propriedade
+                    </h4>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        
+                        <!-- Cultura -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Cultura Pretendida:</label>
+                            <select id="plantio-crop-select" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm font-semibold rounded-xl p-3 focus:ring-2 focus:ring-emerald-500">
+                                <!-- Preenchido via JS -->
+                            </select>
+                        </div>
+
+                        <!-- Município -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Município / Polo Regional:</label>
+                            <select id="plantio-city-select" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm font-semibold rounded-xl p-3 focus:ring-2 focus:ring-emerald-500">
+                                <!-- Preenchido via JS -->
+                            </select>
+                        </div>
+
+                        <!-- Tipo de Solo -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Tipo de Solo:</label>
+                            <select id="plantio-soil-select" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-xl p-3 focus:ring-2 focus:ring-emerald-500">
+                                <option value="misto">Franco / Misto (Equilibrado e solto)</option>
+                                <option value="arenoso">Arenoso (Leve, seca rápido)</option>
+                                <option value="argiloso">Argiloso (Pesado / barrento, retém água)</option>
+                                <option value="pedregoso">Pedregoso / Raso</option>
+                            </select>
+                        </div>
+
+                        <!-- Área Disponível -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Área Disponível:</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="plantio-area-input" value="1" min="0.1" step="0.5" class="w-24 bg-slate-50 border border-slate-300 text-slate-800 text-sm font-bold rounded-xl p-3 text-center">
+                                <select id="plantio-area-unit" class="flex-grow bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-xl p-3">
+                                    <option value="tarefas">Tarefas</option>
+                                    <option value="hectares">Hectares (ha)</option>
+                                    <option value="m²">Metros Quadrados (m²)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Época Pretendida -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Época Planejada:</label>
+                            <select id="plantio-season-select" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-xl p-3 focus:ring-2 focus:ring-emerald-500">
+                                <option value="chuvas">Início das Chuvas (Águas / Verão)</option>
+                                <option value="safrinha">Pós-chuvas / Safrinha</option>
+                                <option value="seca">Período Seco com Irrigação</option>
+                                <option value="imediato">Próximos 15 a 30 dias</option>
+                            </select>
+                        </div>
+
+                        <!-- Disponibilidade de Água -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Disponibilidade de Água:</label>
+                            <select id="plantio-water-select" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-xl p-3 focus:ring-2 focus:ring-emerald-500">
+                                <option value="sequeiro">Sequeiro (Depende somente da chuva)</option>
+                                <option value="gotejamento">Irrigação por Gotejamento</option>
+                                <option value="microaspersao">Microaspersão</option>
+                                <option value="aspersao">Aspersão Convencional</option>
+                                <option value="manual">Molhação Manual (Balde / Regador)</option>
+                            </select>
+                        </div>
+
+                        <!-- Relevo -->
+                        <div class="sm:col-span-2 lg:col-span-3">
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Condição do Relevo da Propriedade:</label>
+                            <select id="plantio-slope-select" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-xl p-3 focus:ring-2 focus:ring-emerald-500">
+                                <option value="plano">Terreno Plano / Suave Ondulado</option>
+                                <option value="baixio">Baixio / Várzea Úmida</option>
+                                <option value="encosta">Encosta / Declive (Exige curvas de nível)</option>
+                                <option value="chapada">Terra de Chapada</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="mt-8 text-center">
+                        <button onclick="generatePlantingPlan()" class="px-8 py-4 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-base rounded-2xl shadow-lg transition flex items-center justify-center gap-2 mx-auto">
+                            <i class="fa-solid fa-wand-magic-sparkles text-emerald-300"></i> Gerar Recomendações Agronômicas
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card de Resultado Detalhado -->
+                <div id="plantio-result-card" class="hidden glass-panel p-6 md:p-10 rounded-2xl shadow-xl border border-amber-300/80 bg-white fade-in">
+                    <!-- Gerado dinamicamente via JS -->
+                </div>
+
+            </div>
+
+            <!-- ============================================== -->
+            <!-- 4. SUB-ABA: ECOARMAZÉM (CONSERVAÇÃO DE SAFRAS) -->
+            <!-- ============================================== -->
+            <div id="rural-sub-armazem" class="hidden space-y-8">
+                
+                <div class="text-center max-w-2xl mx-auto py-2">
+                    <h3 class="text-3xl font-black text-slate-800 mb-2">EcoArmazém Rural</h3>
+                    <p class="text-sm text-slate-600">
+                        Aprenda técnicas comprovadas para armazenar sua colheita, preservar sementes crioulas e evitar o caruncho e o mofo sem depender de químicos venenosos.
+                    </p>
+                </div>
+
+                <!-- Filtros e Barra de Pesquisa -->
+                <div class="glass-panel p-6 rounded-2xl shadow-sm border border-slate-200 bg-white space-y-4">
+                    <!-- Busca por Texto -->
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" oninput="handleStorageSearch(this.value)" placeholder="Pesquise por produto: milho, feijão, mandioca, queijo, banana, alho..." 
+                            class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-xl pl-11 pr-4 py-3 focus:ring-2 focus:ring-amber-500">
+                    </div>
+
+                    <!-- Filtro por Finalidade -->
+                    <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100">
+                        <span class="text-xs font-bold text-slate-500 uppercase mr-2">Finalidade:</span>
+                        <button onclick="setStoragePurpose('todos')" data-purpose="todos" class="armazem-purpose-btn px-4 py-2 rounded-xl font-bold text-xs bg-amber-700 text-white shadow-sm border border-amber-800 transition">
+                            Todas as Finalidades
+                        </button>
+                        <button onclick="setStoragePurpose('sementes')" data-purpose="sementes" class="armazem-purpose-btn px-4 py-2 rounded-xl font-semibold text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition">
+                            🌰 Sementes p/ Próximo Plantio
+                        </button>
+                        <button onclick="setStoragePurpose('consumo')" data-purpose="consumo" class="armazem-purpose-btn px-4 py-2 rounded-xl font-semibold text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition">
+                            🍲 Consumo da Família
+                        </button>
+                        <button onclick="setStoragePurpose('venda')" data-purpose="venda" class="armazem-purpose-btn px-4 py-2 rounded-xl font-semibold text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition">
+                            🚛 Comercialização / Feira
+                        </button>
+                        <button onclick="setStoragePurpose('beneficiamento')" data-purpose="beneficiamento" class="armazem-purpose-btn px-4 py-2 rounded-xl font-semibold text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition">
+                            ⚙️ Beneficiamento (Farinhas/Polpas)
+                        </button>
+                    </div>
+
+                    <!-- Pílulas de Categoria -->
+                    <div id="armazem-category-pills" class="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
+                        <!-- Preenchido via JS -->
+                    </div>
+                </div>
+
+                <!-- Grade de Produtos em Armazenamento -->
+                <div id="armazem-items-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Preenchido via JS -->
+                </div>
+
+                <!-- Modal de Detalhes do Produto -->
+                <div id="armazem-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm items-center justify-center p-4">
+                    <div id="armazem-modal-content" class="bg-white rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl relative fade-in">
+                        <!-- Conteúdo injetado via JS -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ============================================== -->
+            <!-- 5. SUB-ABA: ECOVIDA RURAL (CENTRAL DE VÍDEOS)   -->
+            <!-- ============================================== -->
+            <div id="rural-sub-videos" class="hidden space-y-8">
+                
+                <div class="text-center max-w-2xl mx-auto py-2">
+                    <h3 class="text-3xl font-black text-slate-800 mb-2">EcoVida Rural Audiovisual</h3>
+                    <p class="text-sm text-slate-600">
+                        Vídeos práticos e confiáveis selecionados de instituições oficiais como Embrapa, SENAR, EMATER e centros de tecnologia agroecológica.
+                    </p>
+                </div>
+
+                <!-- Controles e Filtros de Categoria -->
+                <div class="glass-panel p-6 rounded-2xl shadow-sm border border-slate-200 bg-white space-y-4">
+                    <!-- Busca por Palavra-chave -->
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" oninput="handleVideoSearch(this.value)" placeholder="Pesquisar por assunto: gotejamento, galinha caipira, compostagem, palma, silagem, calda..." 
+                            class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-xl pl-11 pr-4 py-3 focus:ring-2 focus:ring-amber-500">
+                    </div>
+
+                    <!-- Pílulas de Categorias -->
+                    <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-slate-300">
+                        <button onclick="filterRuralVideos('todas')" data-cat="todas" class="video-cat-btn px-3 py-2 rounded-xl text-xs font-bold bg-amber-700 text-white shadow-sm border border-amber-800 transition whitespace-nowrap">
+                            Todas as Categorias
+                        </button>
+                        <button onclick="filterRuralVideos('plantio')" data-cat="plantio" class="video-cat-btn px-3 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 hover:bg-amber-50 border border-slate-200 transition whitespace-nowrap">
+                            Técnicas de Plantio
+                        </button>
+                        <button onclick="filterRuralVideos('compostagem')" data-cat="compostagem" class="video-cat-btn px-3 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 hover:bg-amber-50 border border-slate-200 transition whitespace-nowrap">
+                            Compostagem & Adubação
+                        </button>
+                        <button onclick="filterRuralVideos('armazem')" data-cat="armazem" class="video-cat-btn px-3 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 hover:bg-amber-50 border border-slate-200 transition whitespace-nowrap">
+                            Armazenamento de Grãos
+                        </button>
+                        <button onclick="filterRuralVideos('irrigacao')" data-cat="irrigacao" class="video-cat-btn px-3 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 hover:bg-amber-50 border border-slate-200 transition whitespace-nowrap">
+                            Irrigação & Economia d'Água
+                        </button>
+                        <button onclick="filterRuralVideos('animais')" data-cat="animais" class="video-cat-btn px-3 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 hover:bg-amber-50 border border-slate-200 transition whitespace-nowrap">
+                            Criação de Animais
+                        </button>
+                        <button onclick="filterRuralVideos('pragas')" data-cat="pragas" class="video-cat-btn px-3 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 hover:bg-amber-50 border border-slate-200 transition whitespace-nowrap">
+                            Controle de Pragas
+                        </button>
+                        <button onclick="filterRuralVideos('solo')" data-cat="solo" class="video-cat-btn px-3 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 hover:bg-amber-50 border border-slate-200 transition whitespace-nowrap">
+                            Manejo do Solo
+                        </button>
+                        <button onclick="filterRuralVideos('semiarido')" data-cat="semiarido" class="video-cat-btn px-3 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 hover:bg-amber-50 border border-slate-200 transition whitespace-nowrap">
+                            Semiárido & Cisternas
+                        </button>
+                        <button onclick="filterRuralVideos('sustentabilidade')" data-cat="sustentabilidade" class="video-cat-btn px-3 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 hover:bg-amber-50 border border-slate-200 transition whitespace-nowrap">
+                            Sustentabilidade no Campo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Grade de Vídeos -->
+                <div id="videos-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Preenchido via JS -->
+                </div>
+
+                <!-- Modal de Reprodução com Incorporação Oficial do YouTube -->
+                <div id="video-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md items-center justify-center p-4">
+                    <div class="bg-slate-900 text-white rounded-3xl max-w-4xl w-full p-6 shadow-2xl relative border border-slate-700 fade-in">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 id="video-modal-title" class="font-bold text-base md:text-lg truncate text-amber-200 pr-4">Vídeo Educativo</h4>
+                            <button onclick="closeVideoPlayer()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-white flex items-center justify-center transition flex-shrink-0">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <div id="video-player-container">
+                            <!-- iFrame do YouTube inserido aqui -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ============================================== -->
+            <!-- 6. SUB-ABA: ECOCOTAÇÃO (PREÇOS E MERCADO)      -->
+            <!-- ============================================== -->
+            <div id="rural-sub-cotacao" class="hidden space-y-8">
+                
+                <div class="text-center max-w-2xl mx-auto py-2">
+                    <h3 class="text-3xl font-black text-slate-800 mb-2">EcoCotação Agrícola</h3>
+                    <p class="text-sm text-slate-600">
+                        Consulte preços de referência do mercado atacadista e produtor com base em levantamentos oficiais da CONAB, CEASAs e cooperativas regionais.
+                    </p>
+                </div>
+
+                <!-- Filtros por Estado, Categoria e Busca -->
+                <div class="glass-panel p-6 rounded-2xl shadow-sm border border-slate-200 bg-white grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- Estado (UF) -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1.5">Estado / Praça de Referência:</label>
+                        <select onchange="handleCotacaoStateChange(this.value)" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm font-semibold rounded-xl p-3 focus:ring-2 focus:ring-emerald-500">
+                            <option value="todos">Todos os Estados</option>
+                            <option value="BA">Bahia (Irecê / Barreiras / Juazeiro)</option>
+                            <option value="PE">Pernambuco (Recife / Petrolina / Caruaru)</option>
+                            <option value="CE">Ceará (Maracanaú / Tianguá)</option>
+                            <option value="PB">Paraíba (Campina Grande / Patos)</option>
+                            <option value="RN">Rio Grande do Norte (Mossoró / Açu)</option>
+                            <option value="AL">Alagoas (Bacia Leiteira / Arapiraca)</option>
+                            <option value="MA">Maranhão (Balsas / Centro)</option>
+                            <option value="MG">Minas Gerais (CeasaMinas)</option>
+                        </select>
+                    </div>
+
+                    <!-- Categoria de Produto -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1.5">Categoria do Produto:</label>
+                        <select onchange="handleCotacaoCategoryChange(this.value)" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-xl p-3 focus:ring-2 focus:ring-emerald-500">
+                            <option value="todos">Todas as Categorias</option>
+                            <option value="Grãos">Grãos e Cereais (Milho, Feijão, Arroz)</option>
+                            <option value="Raízes e Farinhas">Mandioca, Macaxeira e Farinhas</option>
+                            <option value="Hortaliças">Hortaliças (Tomate, Cebola, Alho)</option>
+                            <option value="Frutas">Frutas (Banana, Manga, Melancia)</option>
+                            <option value="Pecuária e Laticínios">Pecuária e Leite (Leite Cru, Queijo Coalho)</option>
+                        </select>
+                    </div>
+
+                    <!-- Busca Livre -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1.5">Pesquisar Produto:</label>
+                        <input type="text" oninput="handleCotacaoSearch(this.value)" placeholder="Ex: milho, feijão, leite..." 
+                            class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-xl p-3 focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+
+                <!-- Grade de Cotações -->
+                <div id="cotacao-items-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Preenchido via JS -->
+                </div>
+
+                <!-- Painel de Transparência sobre Mercado Agrícola -->
+                <div class="bg-amber-50/70 p-6 rounded-2xl border border-amber-200 text-xs text-amber-950 leading-relaxed space-y-2">
+                    <h5 class="font-bold text-sm text-amber-900 flex items-center gap-1.5">
+                        <i class="fa-solid fa-scale-balanced text-amber-700"></i> Nota Importante sobre Preços e Comercialização:
+                    </h5>
+                    <p>
+                        As cotações apresentadas refletem a média praticada nos centros de distribuição regional (CEASAs) e nos boletins oficiais da Companhia Nacional de Abastecimento (CONAB).
+                    </p>
+                    <p>
+                        O valor pago na <em>porteira da fazenda</em> pode sofrer deságios legítimos decorrentes de custos de frete rodoviário, limpeza, embalagem, classificação e perdas por perecibilidade. Consulte sempre os compradores da sua região e cooperativas locais para negociar com segurança.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- ============================================== -->
+            <!-- 7. SUB-ABA: ECOIA RURAL (ASSISTENTE VIRTUAL)   -->
+            <!-- ============================================== -->
+            <div id="rural-sub-ia" class="hidden space-y-6">
+                
+                <div class="text-center max-w-2xl mx-auto py-2">
+                    <h3 class="text-3xl font-black text-slate-800 mb-2">EcoIA Rural</h3>
+                    <p class="text-sm text-slate-600">
+                        Assistente agronômico interativo. Tire dúvidas sobre manejo, época de plantio, caldas naturais contra pragas e convivência sustentável com o clima.
+                    </p>
+                </div>
+
+                <div class="glass-panel rounded-3xl border border-slate-200 shadow-xl overflow-hidden bg-white max-w-3xl mx-auto flex flex-col h-[650px]">
+                    
+                    <!-- Cabeçalho do Chat -->
+                    <div class="bg-amber-800 text-white p-4 flex items-center justify-between shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-amber-700 border-2 border-amber-400 flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-wheat-awn text-amber-300"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm leading-tight">EcoIA Rural • Especialista Agropecuário</h4>
+                                <span class="text-[11px] text-amber-200 flex items-center gap-1">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span> Base Técnica Embrapa & Semiárido Ativa
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Botão de Chave OpenAI (Opcional) -->
+                        <button onclick="openIaSettingsModal()" class="px-3 py-1.5 rounded-xl bg-amber-900 hover:bg-amber-950 text-amber-200 text-xs font-semibold border border-amber-700 transition flex items-center gap-1.5" title="Configurar chave de IA opcional">
+                            <i class="fa-solid fa-gear"></i> <span class="hidden sm:inline">Configurações</span>
+                        </button>
+                    </div>
+
+                    <!-- Mensagens do Chat -->
+                    <div id="rural-chat-messages" class="flex-grow p-4 md:p-6 overflow-y-auto bg-slate-50 space-y-4">
+                        <!-- Mensagens renderizadas via JS -->
+                    </div>
+
+                    <!-- Sugestões de Perguntas Rápidas -->
+                    <div class="p-3 bg-white border-t border-slate-100 flex gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
+                        <button onclick="sendToEcoIaChat('Qual é a melhor época para plantar milho na minha região?')" class="px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 whitespace-nowrap transition">
+                            🌾 Época de plantio do milho?
+                        </button>
+                        <button onclick="sendToEcoIaChat('Como combater a lagarta do cartucho de forma natural sem veneno?')" class="px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 whitespace-nowrap transition">
+                            🐛 Combater lagarta do cartucho?
+                        </button>
+                        <button onclick="sendToEcoIaChat('Como posso guardar feijão em garrafa pet sem dar caruncho?')" class="px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 whitespace-nowrap transition">
+                            🫙 Guardar feijão sem caruncho?
+                        </button>
+                        <button onclick="sendToEcoIaChat('Qual a receita da calda bordalesa e como aplicar nas plantas?')" class="px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 whitespace-nowrap transition">
+                            🌿 Receita da Calda Bordalesa?
+                        </button>
+                        <button onclick="sendToEcoIaChat('Dicas práticas de convivência com a seca e uso da palma forrageira.')" class="px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 whitespace-nowrap transition">
+                            🌵 Convivência com a seca e palma?
+                        </button>
+                    </div>
+
+                    <!-- Caixa de Entrada de Texto -->
+                    <div class="p-4 bg-white border-t border-slate-200 flex gap-2 items-center">
+                        <input type="text" id="rural-chat-input" onkeypress="if(event.key==='Enter') submitEcoIaMessage()" 
+                            placeholder="Pergunte sobre plantio, pragas, armazenamento, esterco, irrigação..." 
+                            class="flex-grow bg-slate-100 border border-slate-300 text-slate-800 text-sm rounded-xl p-3 focus:ring-2 focus:ring-amber-500">
+                        <button onclick="submitEcoIaMessage()" class="px-5 py-3 bg-amber-700 hover:bg-amber-800 text-white rounded-xl font-bold text-sm transition shadow-sm flex items-center justify-center gap-1.5">
+                            <span>Enviar</span> <i class="fa-solid fa-paper-plane text-xs"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Modal de Configuração de Inteligência Artificial -->
+                <div id="ia-settings-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm items-center justify-center p-4">
+                    <div class="bg-white rounded-3xl max-w-lg w-full p-6 md:p-8 shadow-2xl relative fade-in border border-slate-200">
+                        <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                            <h4 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                                <i class="fa-solid fa-microchip text-amber-600"></i> Motor de Inteligência Artificial
+                            </h4>
+                            <button onclick="closeIaSettingsModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+
+                        <!-- Status da IA -->
+                        <div class="mb-4 p-3 bg-emerald-50 rounded-2xl border border-emerald-200 flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-bolt"></i>
+                            </div>
+                            <div class="text-xs">
+                                <span class="font-bold text-emerald-950 block">API de IA Direta Integrada & Ativa!</span>
+                                <span class="text-emerald-800">Você já pode fazer qualquer pergunta livremente sem precisar de cadastro ou chave paga.</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4 mb-6">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Provedor de IA Preferencial:</label>
+                                <select id="ia-provider-select" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm font-semibold rounded-xl p-3 focus:ring-2 focus:ring-amber-500">
+                                    <option value="auto">⚡ IA Aberta Integrada Automática (Sem Chave - Padrão Grátis)</option>
+                                    <option value="gemini">✨ Google Gemini API (Chave Gratuita do Google AI Studio)</option>
+                                    <option value="openai">🤖 OpenAI API (Chave Pessoal GPT-4o-mini)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">
+                                    Chave Google Gemini API (Opcional):
+                                </label>
+                                <input type="password" id="ia-gemini-key-input" placeholder="AIzaSy..." class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-xl p-3 font-mono">
+                                <span class="text-[10px] text-slate-400 mt-1 block">Obtenha sua chave gratuita em <a href="https://aistudio.google.com/" target="_blank" class="text-amber-700 underline font-semibold">aistudio.google.com</a></span>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">
+                                    Chave OpenAI API (Opcional):
+                                </label>
+                                <input type="password" id="ia-openai-key-input" placeholder="sk-..." class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-xl p-3 font-mono">
+                                <span class="text-[10px] text-slate-400 mt-1 block">Caso você já possua créditos ou chave paga na OpenAI.</span>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center pt-3 border-t border-slate-100">
+                            <span class="text-[11px] text-slate-400">Salvo de forma privada no seu dispositivo.</span>
+                            <div class="flex gap-2">
+                                <button onclick="closeIaSettingsModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">
+                                    Fechar
+                                </button>
+                                <button onclick="saveIaSettings()" class="px-5 py-2 bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold rounded-xl transition shadow-sm">
+                                    Salvar Alterações
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ============================================== -->
+            <!-- 8. SUB-ABA: ECOAPROVEITAMENTO (SUSTENTABILIDADE)-->
+            <!-- ============================================== -->
+            <div id="rural-sub-aproveitamento" class="hidden space-y-8">
+                
+                <div class="text-center max-w-2xl mx-auto py-2">
+                    <h3 class="text-3xl font-black text-slate-800 mb-2">EcoAproveitamento Rural</h3>
+                    <p class="text-sm text-slate-600">
+                        Práticas sustentáveis que unem a preservação ecológica ao aumento da rentabilidade na propriedade familiar: reciclagem de nutrientes, destinação de embalagens e conservação do solo.
+                    </p>
+                </div>
+
+                <!-- Calculadora de Esterco e Mulching -->
+                <div class="glass-panel p-6 md:p-8 rounded-2xl shadow-md border border-amber-200 bg-white">
+                    <h4 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-calculator text-amber-700"></i> Calculadora de Adubação Orgânica & Cobertura Morta (Mulching)
+                    </h4>
+                    <p class="text-xs text-slate-600 mb-6">
+                        Descubra a quantidade recomendada de esterco curtido e palha protetora para o tamanho da sua área:
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tamanho da Área em m²:</label>
+                            <input type="number" id="calc-area-size" value="100" min="5" step="10" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm font-bold rounded-xl p-3 text-center">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Finalidade da Área:</label>
+                            <select id="calc-type-select" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-xl p-3">
+                                <option value="horta">Horta / Canteiros de Hortaliças</option>
+                                <option value="roca">Roça Familiar (Milho / Feijão / Mandioca)</option>
+                                <option value="fruticultura">Pomar / Fruticultura (Cova)</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="calculateCompostAndMulch()" class="w-full py-3.5 bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs rounded-xl shadow-sm transition">
+                                Calcular Necessidade
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Resultado da Calculadora -->
+                    <div id="calc-result-box" class="hidden fade-in"></div>
+                </div>
+
+                <!-- 5 Guias Práticos de Sustentabilidade Rural -->
+                <div class="space-y-6">
+                    
+                    <!-- 1. Logística Reversa de Embalagens de Defensivos (inPEV) -->
+                    <div class="glass-panel p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 bg-white">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 border-b border-slate-100 pb-3">
+                            <h4 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                                <i class="fa-solid fa-shield-virus text-red-500"></i> 1. Logística Reversa de Embalagens de Defensivos (Sistema Campo Limpo)
+                            </h4>
+                            <span class="text-xs bg-red-100 text-red-800 font-bold px-2.5 py-1 rounded-full border border-red-300">
+                                Obrigatório por Lei (9.974/2000)
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                            Embalagens de defensivos vazias <strong>jamais</strong> devem ser queimadas, enterradas ou reutilizadas para água ou alimentos. O procedimento oficial do inPEV garante segurança total:
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 text-xs">
+                            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-center">
+                                <span class="w-7 h-7 rounded-full bg-amber-700 text-white font-bold inline-flex items-center justify-center mb-2">1</span>
+                                <strong class="block text-slate-800 mb-1">Esgotamento</strong>
+                                <p class="text-slate-600">Escorra a embalagem sobre o tanque do pulverizador por 30 segundos.</p>
+                            </div>
+                            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-center">
+                                <span class="w-7 h-7 rounded-full bg-amber-700 text-white font-bold inline-flex items-center justify-center mb-2">2</span>
+                                <strong class="block text-slate-800 mb-1">Tríplice Lavagem</strong>
+                                <p class="text-slate-600">Encha 1/4 com água, tampe, agite por 30 segundos e despeje no tanque. Repita 3 vezes.</p>
+                            </div>
+                            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-center">
+                                <span class="w-7 h-7 rounded-full bg-amber-700 text-white font-bold inline-flex items-center justify-center mb-2">3</span>
+                                <strong class="block text-slate-800 mb-1">Inutilização</strong>
+                                <p class="text-slate-600">Fure o fundo da embalagem plástica para que ninguém a use para alimentos ou água.</p>
+                            </div>
+                            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-center">
+                                <span class="w-7 h-7 rounded-full bg-amber-700 text-white font-bold inline-flex items-center justify-center mb-2">4</span>
+                                <strong class="block text-slate-800 mb-1">Devolução Oficial</strong>
+                                <p class="text-slate-600">Entregue no posto credenciado em até 1 ano após a compra e guarde o comprovante.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Compostagem e Biofertilizantes Líquidos -->
+                    <div class="glass-panel p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 bg-white">
+                        <h4 class="font-bold text-slate-800 text-lg mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-leaf text-emerald-600"></i> 2. Compostagem Rural e Biofertilizante Líquido Caseiro
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-slate-700">
+                            <div class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-200">
+                                <h5 class="font-bold text-emerald-900 text-sm mb-2">Pilha de Compostagem em Leira:</h5>
+                                <ul class="space-y-1.5 list-disc list-inside">
+                                    <li>Alterne camadas de palha seca (restos de milho, capim) com esterco de gado/caprino.</li>
+                                    <li>Mantenha umidade moderada (ao apertar na mão, não deve escorrer água).</li>
+                                    <li>Revire com garfo a cada 15 dias. Em 60 a 90 dias terá um adubo rico sem cheiro ruim.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-amber-50/50 p-4 rounded-xl border border-amber-200">
+                                <h5 class="font-bold text-amber-950 text-sm mb-2">Receita de Biofertilizante Agrobio:</h5>
+                                <ul class="space-y-1.5 list-disc list-inside">
+                                    <li>50 kg de esterco fresco + 100 L de água + 2 L de leite + 1 kg de rapadura em bombona.</li>
+                                    <li>Coloque mangueira de respiro na tampa mergulhada em garrafa d'água (válvula contra moscas).</li>
+                                    <li>Fermente por 30 dias. Dilua a 5% (500 ml em 10 L d'água) para pulverização foliar.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Tecnologias Hídricas de Convivência com a Seca -->
+                    <div class="glass-panel p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 bg-white">
+                        <h4 class="font-bold text-slate-800 text-lg mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-droplet text-blue-600"></i> 3. Tecnologias Hídricas de Convivência com o Semiárido
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <strong class="text-blue-900 block mb-1">Cisterna de Placas (16 mil L):</strong>
+                                <p class="text-slate-600">Água de chuva do telhado para beber e cozinhar. Descarte os primeiros 5 minutos de chuva antes de armazenar.</p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <strong class="text-blue-900 block mb-1">Cobertura Morta (Mulching):</strong>
+                                <p class="text-slate-600">Palha seca sobre a terra reduz a evaporação da água em até 70% e diminui a temperatura do solo nos dias de sol quente.</p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <strong class="text-blue-900 block mb-1">Barraginhas de Enxurrada:</strong>
+                                <p class="text-slate-600">Pequenas bacias de terra cavadas no trajeto da água que freiam enxurradas e alimentam poços e o lençol freático.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Resíduos Especiais do Campo -->
+                    <div class="glass-panel p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 bg-white">
+                        <h4 class="font-bold text-slate-800 text-lg mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-battery-three-quarters text-orange-500"></i> 4. Descarte de Resíduos Perigosos da Fazenda
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <strong class="text-slate-800 block mb-1">Baterias Solares & Cercas:</strong>
+                                <p class="text-slate-600">Baterias de eletrificação solar contêm chumbo e ácido. Devolva aos revendedores que realizam logística reversa.</p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <strong class="text-slate-800 block mb-1">Óleo de Trator e Motosserra:</strong>
+                                <p class="text-slate-600">NUNCA despeje no chão ou em riachos (1 litro de óleo contamina 1 milhão de litros d'água). Guarde em galões e entregue em oficinas.</p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <strong class="text-slate-800 block mb-1">Pilhas de Lanterna e Rádio:</strong>
+                                <p class="text-slate-600">Junte em uma garrafa PET fechada e entregue nos pontos de coleta seletiva na sede do município ou nas farmácias.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </main>
 
     <footer class="bg-slate-900 text-slate-400 py-8 text-center mt-auto">
         <p>&copy; 2026 EcoGuia. Ação local, impacto global. <i class="fa-solid fa-earth-americas text-eco-primary ml-1"></i></p>
     </footer>
 
-    <!-- Script externo vinculado -->
-    <script src="script.js"></script>
-    
-</body>
-</html>
-<!-- 1º: Carrega o banco de dados primeiro -->
+    <!-- 1º: banco de dados | 2º: funções que usam o banco (carregados UMA vez só) -->
     <script src="dados.js"></script>
-    
-    <!-- 2º: Carrega as funções que vão usar o banco de dados -->
+    <script src="rural-dados.js"></script>
     <script src="script.js"></script>
+    <script src="rural.js"></script>
 
 </body>
 </html>
