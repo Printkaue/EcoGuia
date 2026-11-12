@@ -665,67 +665,243 @@ async function performSearch() {
         document.getElementById('error-msg').innerText = "Ocorreu um erro de conexão com a Wikipedia.";
     }
 }
-// === FUNÇÃO PARA BUSCAR NOTÍCIAS (ECONOTÍCIAS) ===
-async function fetchEcoNews() {
+// === ECONOTÍCIAS ===
+let newsLoaded = false;
+let newsLoading = false;
+
+function escapeHtml(str) {
+    return String(str || '').replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+}
+
+function fetchWithTimeout(url, ms = 9000) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), ms);
+    return fetch(url, { signal: ctrl.signal }).finally(() => clearTimeout(timer));
+}
+
+function buildNewsFeedUrl(periodo) {
+    const q = `reciclagem OR "meio ambiente" OR sustentabilidade when:${periodo}`;
+    return `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=pt-BR&gl=BR&ceid=BR:pt-419`;
+}
+
+function parseNewsDate(raw) {
+    if (!raw) return null;
+    // GDELT usa o formato UTC "20261028T143000Z".
+    const gdeltDate = String(raw).match(/^(\d{4})(\d{2})(\d{2})T?(\d{2})(\d{2})(\d{2})Z?$/);
+    if (gdeltDate) {
+        const [, year, month, day, hour, minute, second] = gdeltDate;
+        return new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}Z`);
+    }
+    // rss2json devolve "2026-10-28 14:30:00" (UTC) -> formato que o Safari também entende
+    if (/^\d{4}-\d{2}-\d{2} \d/.test(raw)) raw = raw.replace(' ', 'T') + 'Z';
+    const d = new Date(raw);
+    return isNaN(d) ? null : d;
+}
+
+function buildGdeltNewsUrl(periodo) {
+    const params = new URLSearchParams({
+        query: '(reciclagem OR "meio ambiente" OR sustentabilidade)',
+        mode: 'artlist',
+        format: 'json',
+        maxrecords: '24',
+        timespan: periodo,
+        sort: 'datedesc'
+    });
+    return `https://api.gdeltproject.org/api/v2/doc/doc?${params.toString()}`;
+}
+
+function buildFreeNewsUrl(term, periodo) {
+    const params = new URLSearchParams({
+        q: term,
+        lang: 'pt',
+        date: periodo === '1d' ? '24h' : '7d',
+        sort: 'relevance',
+        size: '8'
+    });
+    return `https://freenewsapi.ai/v1/search?${params.toString()}`;
+}
+
+function safeNewsUrl(value) {
+    try {
+        const url = new URL(value);
+        return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+    } catch {
+        return '';
+    }
+}
+
+// Fonte principal: API JSON sem chave e com CORS liberado pelo próprio serviço.
+async function getFreeNewsItems(periodo) {
+    const terms = ['reciclagem', 'meio ambiente'];
+    const groups = await Promise.all(terms.map(async term => {
+        try {
+            const response = await fetchWithTimeout(buildFreeNewsUrl(term, periodo));
+            if (!response.ok) throw new Error(`FreeNewsApi respondeu ${response.status}`);
+
+            const data = await response.json();
+            if (!Array.isArray(data.results)) return [];
+
+            return data.results.map(article => ({
+                title: article.title || '',
+                link: article.url || '',
+                date: article.published_at || '',
+                source: article.sitename || article.host || 'Notícia ambiental'
+            }));
+        } catch (error) {
+            console.warn(`FreeNewsApi falhou para "${term}":`, error);
+            return [];
+        }
+    }));
+
+    const uniqueItems = new Map();
+    groups.flat().forEach(article => {
+        const url = safeNewsUrl(article.link);
+        if (article.title && url && !uniqueItems.has(url)) uniqueItems.set(url, article);
+    });
+    return [...uniqueItems.values()];
+}
+
+// Contingência para indisponibilidade temporária da fonte principal.
+async function getGdeltNewsItems(periodo) {
+    try {
+        const response = await fetchWithTimeout(buildGdeltNewsUrl(periodo));
+        if (!response.ok) throw new Error(`GDELT respondeu ${response.status}`);
+
+        const data = await response.json();
+        if (!Array.isArray(data.articles)) return [];
+
+        return data.articles
+            .map(article => ({
+                title: article.title || '',
+                link: article.url || '',
+                date: article.seendate || article.date || '',
+                source: article.domain || 'GDELT'
+            }))
+            .filter(article => article.title && safeNewsUrl(article.link));
+    } catch (error) {
+        console.warn('GDELT falhou:', error);
+        return [];
+    }
+}
+
+// Contingência para manter a aba disponível caso a fonte principal esteja indisponível.
+async function getGoogleNewsItems(feedUrl) {
+    try {
+        const response = await fetchWithTimeout(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`);
+        if (!response.ok) throw new Error(`rss2json respondeu ${response.status}`);
+        const d = await response.json();
+        if (d.status === 'ok' && Array.isArray(d.items) && d.items.length) {
+            return d.items.map(i => ({ title: i.title, link: i.link, date: i.pubDate }));
+        }
+    } catch (e) { console.warn('rss2json falhou:', e); }
+
+    // Rotas 2 e 3: proxies CORS + leitura do XML
+    const proxies = [
+        u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+        u => `https://corsproxy.io/?${encodeURIComponent(u)}`
+    ];
+    for (const makeUrl of proxies) {
+        try {
+            const r = await fetchWithTimeout(makeUrl(feedUrl));
+            if (!r.ok) continue;
+            const xml = new DOMParser().parseFromString(await r.text(), 'text/xml');
+            const items = [...xml.querySelectorAll('item')].map(it => ({
+                title: it.querySelector('title')?.textContent || '',
+                link: it.querySelector('link')?.textContent || '',
+                date: it.querySelector('pubDate')?.textContent || ''
+            }));
+            if (items.length) return items;
+        } catch (e) { console.warn('proxy falhou:', e); }
+    }
+    return [];
+}
+
+async function getNewsItems(periodo) {
+    const freeNewsItems = await getFreeNewsItems(periodo);
+    if (freeNewsItems.length) return freeNewsItems;
+
+    const gdeltItems = await getGdeltNewsItems(periodo);
+    if (gdeltItems.length) return gdeltItems;
+    return getGoogleNewsItems(buildNewsFeedUrl(periodo));
+}
+
+async function fetchEcoNews(force = false) {
     const container = document.getElementById('news-container');
-    
-    // Mostra um ícone de carregamento enquanto busca
+    if (newsLoading || (newsLoaded && !force)) return;
+    newsLoading = true;
+
     container.innerHTML = `
-        <div class="col-span-1 md:col-span-2 lg:col-span-3 text-center py-10">
+        <div class="col-span-full text-center py-10">
             <i class="fa-solid fa-circle-notch fa-spin text-5xl text-emerald-500 mb-4"></i>
-            <p class="text-slate-600 font-medium text-lg">Buscando as últimas atualizações pelo mundo...</p>
-        </div>
-    `;
+            <p class="text-slate-600 font-medium text-lg">Buscando as últimas atualizações...</p>
+        </div>`;
 
     try {
-        // Usa o Google News RSS (Filtrado por "reciclagem" ou "meio ambiente" do último dia "when:1d")
-        // Como o JS precisa de JSON, usamos a API pública do rss2json para converter
-const rssQuery = encodeURIComponent('https://news.google.com/rss/search?q=reciclagem+OR+"meio+ambiente"+when:1d&hl=pt-BR&gl=BR&ceid=BR:pt-419');
-        const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${rssQuery}`;
-
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-
-        container.innerHTML = ''; // Limpa o carregamento
-
-        if (data.status === 'ok' && data.items.length > 0) {
-            // Pega apenas as 6 notícias mais relevantes
-            const noticias = data.items.slice(0, 12);
-
-            noticias.forEach(item => {
-                // Formata a data e hora para o padrão do Brasil
-                const dataPublicacao = new Date(item.pubDate).toLocaleDateString('pt-BR', {
-                    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
-                });
-
-                // Cria o card de cada notícia, contendo o título, data, referência (fonte) e link
-                const card = `
-                    <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 flex flex-col h-full hover:-translate-y-1 transition duration-300 hover:border-emerald-500">
-                        <div class="flex items-center gap-2 text-xs font-bold text-emerald-600 mb-3 uppercase tracking-wide">
-                            <i class="fa-regular fa-clock"></i> ${dataPublicacao}
-                        </div>
-                        <h3 class="text-lg font-bold text-slate-800 mb-3 leading-snug">${item.title}</h3>
-                        
-                        <div class="mt-auto pt-4 border-t border-slate-100 flex flex-col gap-3">
-                            <p class="text-sm text-slate-500 italic"><i class="fa-solid fa-quote-left mr-1"></i> Referência via Google News</p>
-                            
-                            <a href="${item.link}" target="_blank" class="block text-center w-full bg-emerald-50 hover:bg-emerald-500 text-emerald-700 hover:text-white border border-emerald-200 font-bold py-3 px-4 rounded-xl transition">
-                                Ler notícia na íntegra <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i>
-                            </a>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += card;
-            });
-        } else {
-            container.innerHTML = `<p class="col-span-full text-center text-slate-500">Nenhuma notícia encontrada nas últimas 24 horas.</p>`;
+        // Primeiro as últimas 24h; se vier vazio, amplia para 7 dias
+        let items = await getNewsItems('1d');
+        let ampliado = false;
+        if (!items.length) {
+            items = await getNewsItems('7d');
+            ampliado = items.length > 0;
         }
+
+        if (!items.length) throw new Error('sem resultados');
+
+        items = items
+            .map(i => ({ ...i, d: parseNewsDate(i.date) }))
+            .filter(i => i.title && safeNewsUrl(i.link))
+            .sort((a, b) => (b.d || 0) - (a.d || 0))
+            .slice(0, 12);
+
+        if (!items.length) throw new Error('itens inválidos');
+
+        const aviso = ampliado ? `
+            <div class="col-span-full bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-xl p-3 text-center">
+                <i class="fa-solid fa-circle-info mr-1"></i> Poucas notícias nas últimas 24h — exibindo os destaques da última semana.
+            </div>` : '';
+
+        const cards = items.map(item => {
+            const dataTxt = item.d
+                ? item.d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                : 'Data indisponível';
+
+            // Títulos do Google News vêm como "Título - Fonte"
+            let titulo = item.title, fonte = item.source || 'Google News';
+            if (!item.source) {
+                const pos = titulo.lastIndexOf(' - ');
+                if (pos > 0) { fonte = titulo.slice(pos + 3); titulo = titulo.slice(0, pos); }
+            }
+
+            return `
+                <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 flex flex-col h-full hover:-translate-y-1 transition duration-300 hover:border-emerald-500">
+                    <div class="flex items-center gap-2 text-xs font-bold text-emerald-600 mb-3 uppercase tracking-wide">
+                        <i class="fa-regular fa-clock"></i> ${escapeHtml(dataTxt)}
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-3 leading-snug">${escapeHtml(titulo)}</h3>
+                    <div class="mt-auto pt-4 border-t border-slate-100 flex flex-col gap-3">
+                        <p class="text-sm text-slate-500 italic"><i class="fa-solid fa-quote-left mr-1"></i> Fonte: ${escapeHtml(fonte)}</p>
+                        <a href="${escapeHtml(safeNewsUrl(item.link))}" target="_blank" rel="noopener noreferrer" class="block text-center w-full bg-emerald-50 hover:bg-emerald-500 text-emerald-700 hover:text-white border border-emerald-200 font-bold py-3 px-4 rounded-xl transition">
+                            Ler notícia na íntegra <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i>
+                        </a>
+                    </div>
+                </div>`;
+        }).join('');
+
+        container.innerHTML = aviso + cards;
+        newsLoaded = true;
     } catch (error) {
+        console.error('Erro EcoNotícias:', error);
         container.innerHTML = `
             <div class="col-span-full text-center py-8">
                 <i class="fa-solid fa-triangle-exclamation text-4xl text-red-500 mb-4"></i>
-                <p class="text-red-500 font-medium">Erro ao tentar carregar as notícias de hoje. Verifique sua conexão com a internet.</p>
-            </div>
-        `;
+                <p class="text-red-500 font-medium mb-4">Não foi possível carregar as notícias agora. Verifique sua conexão e tente novamente.</p>
+                <button onclick="fetchEcoNews(true)" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-6 rounded-xl transition">
+                    <i class="fa-solid fa-rotate-right mr-2"></i> Tentar novamente
+                </button>
+            </div>`;
+    } finally {
+        newsLoading = false;
     }
 }

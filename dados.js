@@ -199,7 +199,6 @@ raio_x: {
     guide: "Contêm acetato e metais pesados como a prata, altamente poluentes. NUNCA jogue no lixo comum. Entregue em hospitais, clínicas de diagnóstico ou farmácias credenciadas."
 },
 
-// 7. SAÚDE DOMÉSTICA E SEGURANÇA
 perfurocortantes: {
     title: "Agulhas, Seringas e Perfurocortantes (Insulina, Lancetas, Lâminas de Barbear)",
     icon: "fa-syringe",
@@ -213,7 +212,6 @@ cosmeticos_esmaltes: {
     guide: "Embalagens plásticas limpas vão no plástico. Potes de esmalte com resíduo seco e maquiagens vencidas contêm químicos; descarte em coletores de logística reversa de perfumarias ou no lixo comum."
 },
 
-// 8. MÍDIA, IMPRESSÃO E ELETRÔNICOS MENORES
 cds_dvds: {
     title: "CDs, DVDs, Fitas VHS e Disquetes",
     icon: "fa-compact-disc",
